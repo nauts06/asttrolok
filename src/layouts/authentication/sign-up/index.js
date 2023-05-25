@@ -40,6 +40,9 @@ import curved6 from "assets/images/curved-images/curved14.jpg";
 import AuthApi from "../../../api/auth";
 
 import { useAuth } from "auth-context/auth.context";
+import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -61,21 +64,55 @@ function SignUp() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    AuthApi.Register(formData)
-      .then((response) => {
-        if (response.data.success) {
-          return navigate("/authentication/sign-in");
-        } else {
-          setError(response.data.msg);
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          return setError(error.response.data.msg);
-        }
-        return setError("There has been an error.");
-      });
+    console.log("registerButt", formData);
+    // AuthApi.Register(formData)
+    //   .then((response) => {
+    //     if (response.data.success) {
+    //       return navigate("/authentication/sign-in");
+    //     } else {
+    //       setError(response.data.msg);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     if (error.response) {
+    //       return setError(error.response.data.msg);
+    //     }
+    //     return setError("There has been an error.");
+    //   });
   };
+
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      email: "",
+      mobile: "",
+      password: "",
+      gender: "None",
+      pob: "",
+      dob: "",
+      tob: "",
+      bc: "",
+    },
+    validationSchema: Yup.object({
+      mobile: Yup.string()
+        .min(10, "Mininum 10 Digits Required!")
+        .max(10, "Maximum 10 Digits Required!")
+        .required("Required!"),
+      //   mobile: Yup.string()
+      //     .email("Invalid email format")
+      //     .required("Required!"),
+      //   password: Yup.string()
+      //     .min(8, "Minimum 8 characters")
+      //     .required("Required!"),
+      //   confirm_password: Yup.string()
+      //     .oneOf([Yup.ref("password")], "Password's not match")
+      //     .required("Required!")
+    }),
+    onSubmit: (values) => {
+      // alert(JSON.stringify(values, null, 2));
+      console.log("registerButt", values);
+    },
+  });
 
   const handleRedirect = () => navigate("/dashboard");
 
@@ -95,43 +132,129 @@ function SignUp() {
           </SoftBox>
         </Card>
       ) : (
-        <Card>
+        <Card style={{ width: "auto" }}>
           <SoftBox p={3} mb={1} textAlign="center">
             <SoftTypography variant="h5" fontWeight="medium">
-              Register with
+              Sign in to Asttrolok
             </SoftTypography>
           </SoftBox>
-          <SoftBox display="flex" flexDirection="column" alignItems="center" mb={2}>
+          {/* <SoftBox display="flex" flexDirection="column" alignItems="center" mb={2}>
             <GithubSocial />
-          </SoftBox>
-          <Separator />
+          </SoftBox> */}
+          {/* <Separator /> */}
           <SoftBox pt={2} pb={3} px={3}>
-            <SoftBox component="form" role="form">
+            {/* <SoftBox component="form" role="form"> */}
+            <form onSubmit={formik.handleSubmit}>
               <SoftBox mb={2}>
-                <SoftInput
+                <TextField
                   type="text"
                   name="username"
+                  fullWidth
                   placeholder="Name"
-                  onChange={handleFormData}
+                  onChange={formik.handleChange}
+                  value={formik.values.username}
+                  required
                 />
               </SoftBox>
               <SoftBox mb={2}>
-                <SoftInput
+                <TextField
                   type="email"
                   name="email"
-                  onChange={handleFormData}
+                  fullWidth
+                  onChange={formik.handleChange}
+                  value={formik.values.email}
                   placeholder="Email"
+                  required
                 />
               </SoftBox>
               <SoftBox mb={2}>
-                <SoftInput
+                <TextField
+                  fullWidth
                   type="password"
                   name="password"
-                  onChange={handleFormData}
+                  onChange={formik.handleChange}
+                  value={formik.values.password}
                   placeholder="Password"
+                  required
                 />
               </SoftBox>
-              <SoftBox display="flex" alignItems="center">
+              <SoftBox mb={2}>
+                <TextField
+                  type="number"
+                  name="mobile"
+                  fullWidth
+                  placeholder="Mobile"
+                  onChange={formik.handleChange}
+                  value={formik.values.mobile}
+                  required
+                />
+                {formik.errors.mobile && formik.touched.mobile && <p>{formik.errors.mobile}</p>}
+              </SoftBox>
+              <SoftBox mb={2}>
+                {/* <InputLabel id="demo-simple-select-label">Gender</InputLabel> */}
+                <TextField
+                  fullWidth
+                  select
+                  defaultValue="None"
+                  name="gender"
+                  value={formik.values.gender}
+                  // label="Gender"
+                  variant="outlined"
+                  placeholder="Gender"
+                  onChange={formik.handleChange}
+                  required
+                >
+                  <MenuItem value="None">Select Gender</MenuItem>
+                  <MenuItem value="male">Male</MenuItem>
+                  <MenuItem value="female">Female</MenuItem>
+                  <MenuItem value="other">Other</MenuItem>
+                </TextField>
+              </SoftBox>
+              <SoftBox mb={2}>
+                <TextField
+                  type="text"
+                  name="pob"
+                  fullWidth
+                  placeholder="Place of Birth"
+                  onChange={formik.handleChange}
+                  value={formik.values.pob}
+                  required
+                />
+              </SoftBox>
+              <SoftBox mb={2}>
+                <TextField
+                  type="date"
+                  name="dob"
+                  fullWidth
+                  placeholder="Date of Birth"
+                  onChange={formik.handleChange}
+                  value={formik.values.dob}
+                  required
+                />
+              </SoftBox>
+              <SoftBox mb={2}>
+                <TextField
+                  type="time"
+                  name="tob"
+                  fullWidth
+                  placeholder="Date of Birth"
+                  onChange={formik.handleChange}
+                  value={formik.values.tob}
+                  required
+                />
+              </SoftBox>
+              <SoftBox mb={2}>
+                <TextField
+                  type="text"
+                  name="bc"
+                  fullWidth
+                  placeholder="Birth Country"
+                  onChange={formik.handleChange}
+                  value={formik.values.bc}
+                  required
+                />
+              </SoftBox>
+              {/* <SoftBox display="flex" alignItems="center">
                 <Checkbox checked={agreement} onChange={handleSetAgremment} />
                 <SoftTypography
                   variant="button"
@@ -139,7 +262,7 @@ function SignUp() {
                   onClick={handleSetAgremment}
                   sx={{ cursor: "poiner", userSelect: "none" }}
                 >
-                  &nbsp;&nbsp;I agree the&nbsp;
+                  &nbsp;&nbsp; Are you an Astrologer&nbsp;
                 </SoftTypography>
                 <SoftTypography
                   component="a"
@@ -147,10 +270,10 @@ function SignUp() {
                   variant="button"
                   fontWeight="bold"
                   textGradient
-                >
-                  Terms and Conditions
-                </SoftTypography>
-              </SoftBox>
+                > */}
+              {/* Are you an Astrologer */}
+              {/* </SoftTypography>
+              </SoftBox> */}
               <SoftBox mt={2} mb={2} textAlign="center">
                 <h6
                   style={{
@@ -165,7 +288,14 @@ function SignUp() {
                 </h6>
               </SoftBox>
               <SoftBox mt={4} mb={1}>
-                <SoftButton variant="gradient" color="dark" onClick={handleSubmit} fullWidth>
+                <SoftButton
+                  variant="gradient"
+                  color="dark"
+                  type="submit"
+                  fullWidth
+                  component={Link}
+                  to="/authentication/sign-in"
+                >
                   sign up
                 </SoftButton>
               </SoftBox>
@@ -180,11 +310,12 @@ function SignUp() {
                     fontWeight="bold"
                     textGradient
                   >
-                    Sign in
+                    Log in
                   </SoftTypography>
                 </SoftTypography>
               </SoftBox>
-            </SoftBox>
+            </form>
+            {/* </SoftBox> */}
           </SoftBox>
         </Card>
       )}

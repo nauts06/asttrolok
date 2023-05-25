@@ -38,14 +38,16 @@ import curved9 from "assets/images/curved-images/curved-6.jpg";
 import AuthApi from "../../../api/auth";
 import { useAuth } from "../../../auth-context/auth.context";
 import { API_SERVER } from "config/constant";
+import { TextField } from "@mui/material";
+import { useFormik } from "formik";
 
 function SignIn() {
   const navigate = useNavigate();
 
   const [rememberMe, setRememberMe] = useState(true);
   const [formData, setFormData] = useState({
-    'email': '',
-    'password': ''
+    email: "",
+    password: "",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -64,20 +66,22 @@ function SignIn() {
 
   const submitFormData = (e) => {
     e.preventDefault();
-    AuthApi.Login(formData)
-      .then((response) => {
-        if (response.data.success) {
-          return setProfile(response);
-        } else {
-          setError(response.data.msg);
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          return setError(error.response.data.msg);
-        }
-        return setError("There has been an error.");
-      });
+
+    console.log("asdfghj", formData);
+    // AuthApi.Login(formData)
+    //   .then((response) => {
+    //     if (response.data.success) {
+    //       return setProfile(response);
+    //     } else {
+    //       setError(response.data.msg);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     if (error.response) {
+    //       return setError(error.response.data.msg);
+    //     }
+    //     return setError("There has been an error.");
+    //   });
   };
 
   const handleRedirect = () => {
@@ -124,6 +128,33 @@ function SignIn() {
     }
   }, []);
 
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+
+      password: "",
+    },
+    // validationSchema: Yup.object({
+    //   mobile: Yup.string()
+    //     .min(10, "Mininum 10 Digits Required!")
+    //     .max(10, "Maximum 10 Digits Required!")
+    //     .required("Required!"),
+    //   //   mobile: Yup.string()
+    //   //     .email("Invalid email format")
+    //   //     .required("Required!"),
+    //   //   password: Yup.string()
+    //   //     .min(8, "Minimum 8 characters")
+    //   //     .required("Required!"),
+    //   //   confirm_password: Yup.string()
+    //   //     .oneOf([Yup.ref("password")], "Password's not match")
+    //   //     .required("Required!")
+    // }),
+    onSubmit: (values) => {
+      // alert(JSON.stringify(values, null, 2));
+      console.log("loginButt", values);
+    },
+  });
+
   return (
     <CoverLayout
       title="Welcome back"
@@ -151,18 +182,33 @@ function SignIn() {
         </div>
       ) : (
         <>
-          <SoftBox display="flex" flexDirection="column" alignItems="center" mb={2}>
+          {/* <SoftBox display="flex" flexDirection="column" alignItems="center" mb={2}>
             <GithubSocial />
-          </SoftBox>
-          <Separator />
-          <SoftBox component="form" role="form">
+          </SoftBox> */}
+          {/* <Separator /> */}
+          <form onSubmit={formik.handleSubmit}>
+            {/* <SoftBox component="form" role="form"> */}
             <SoftBox mb={2}>
               <SoftBox mb={1} ml={0.5}>
                 <SoftTypography component="label" variant="caption" fontWeight="bold">
                   Email
                 </SoftTypography>
               </SoftBox>
-              <SoftInput type="email" name="email" value={formData?.email} onChange={handleFormData} placeholder="Email" />
+              {/* <TextField
+              fullWidth
+               id="outlined-basic"
+                label="Outlined" 
+                variant="outlined" /> */}
+
+              <TextField
+                fullWidth
+                required
+                type="email"
+                name="email"
+                onChange={formik.handleChange}
+                value={formik.values.username}
+                placeholder="Email"
+              />
             </SoftBox>
             <SoftBox mb={2}>
               <SoftBox mb={1} ml={0.5}>
@@ -171,11 +217,13 @@ function SignIn() {
                 </SoftTypography>
               </SoftBox>
               <SoftInput
+              required
                 type="password"
                 name="password"
-                onChange={handleFormData}
+                onChange={formik.handleChange}
+                  value={formik.values.username}
                 placeholder="Password"
-                value={formData?.password}
+                
               />
             </SoftBox>
             <SoftBox display="flex" alignItems="center">
@@ -203,8 +251,8 @@ function SignIn() {
               </h6>
             </SoftBox>
             <SoftBox mt={4} mb={1}>
-              <SoftButton variant="gradient" color="info" onClick={submitFormData} fullWidth>
-                sign in
+              <SoftButton variant="gradient" color="info" type="submit" fullWidth>
+                log in
               </SoftButton>
             </SoftBox>
             <SoftBox mt={3} textAlign="center">
@@ -222,7 +270,9 @@ function SignIn() {
                 </SoftTypography>
               </SoftTypography>
             </SoftBox>
-          </SoftBox>
+
+            {/* </SoftBox> */}
+          </form>
         </>
       )}
     </CoverLayout>

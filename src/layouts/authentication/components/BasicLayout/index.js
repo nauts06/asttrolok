@@ -37,7 +37,7 @@ function BasicLayout({ title, description, image, children }) {
         action={{
           type: "external",
           route: "https://appseed.us/product/node-js-react-soft-dashboard",
-          label: "free download",
+          label: "Log In To Asttrolok",
         }}
         transparent
         light
