@@ -43,6 +43,7 @@ import { useAuth } from "auth-context/auth.context";
 import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 function SignUp() {
   const navigate = useNavigate();
@@ -110,7 +111,30 @@ function SignUp() {
     }),
     onSubmit: (values) => {
       // alert(JSON.stringify(values, null, 2));
-      console.log("registerButt", values);
+
+      
+
+      const data = {
+        name: values.username,
+        email: values.email,
+        password: values.password,
+        mobile: values.mobile,
+        gender: values.gender,
+        birthCity: values.pob,
+        birthCountry: values.bc,
+        birthDate: values.dob,
+        birthTime: values.tob,
+      };
+      console.log("registerButt", data);
+
+      axios.post('http://localhost:4000/api/users/register',data)
+      .then(function (response) {
+        console.log("chacha>>>>",response);
+        navigate("/authentication/sign-in")
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     },
   });
 
@@ -293,8 +317,8 @@ function SignUp() {
                   color="dark"
                   type="submit"
                   fullWidth
-                  component={Link}
-                  to="/authentication/sign-in"
+                  // component={Link}
+                  // to="/authentication/sign-in"
                 >
                   sign up
                 </SoftButton>

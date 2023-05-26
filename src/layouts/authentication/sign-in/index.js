@@ -40,11 +40,12 @@ import { useAuth } from "../../../auth-context/auth.context";
 import { API_SERVER } from "config/constant";
 import { TextField } from "@mui/material";
 import { useFormik } from "formik";
+import axios from "axios";
 
 function SignIn() {
   const navigate = useNavigate();
 
-  const [rememberMe, setRememberMe] = useState(true);
+  const [rememberMe, setRememberMe] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -55,7 +56,10 @@ function SignIn() {
   const { setUser } = useAuth();
   const { user } = useAuth();
 
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
+  const handleSetRememberMe = (value) => {
+    setRememberMe(value);
+    console.log("rememberMe", value);
+  };
 
   const handleFormData = (e) => {
     setFormData({
@@ -67,7 +71,7 @@ function SignIn() {
   const submitFormData = (e) => {
     e.preventDefault();
 
-    console.log("asdfghj", formData);
+    // console.log("asdfghj", formData);
     // AuthApi.Login(formData)
     //   .then((response) => {
     //     if (response.data.success) {
@@ -88,14 +92,14 @@ function SignIn() {
     return navigate("/dashboard");
   };
 
-  const setProfile = (response) => {
-    let user = { ...response.data.user };
-    user.token = response.data.token;
-    user = JSON.stringify(user);
-    setUser(user);
-    localStorage.setItem("user", user);
-    return navigate("/dashboard");
-  };
+  // const setProfile = (response) => {
+  //   let user = { ...response.data.user };
+  //   user.token = response.data.token;
+  //   user = JSON.stringify(user);
+  //   setUser(user);
+  //   localStorage.setItem("user", user);
+  //   return navigate("/dashboard");
+  // };
 
   useEffect(() => {
     const url = window.location.href;
@@ -111,27 +115,26 @@ function SignIn() {
         code: newUrl[1],
       };
 
-      AuthApi.Authorize(requestData.code)
-        .then(({ data }) => {
-          if (data.user) {
-            setUser(JSON.stringify(data.user));
-            localStorage.setItem("user", JSON.stringify(data.user));
-            handleRedirect();
-          } else {
-            setError("no user returned");
-          }
-        })
-        .catch((error) => {
-          setError(error.message);
-        })
-        .finally(() => setIsLoading(false));
+      // AuthApi.Authorize(requestData.code)
+      //   .then(({ data }) => {
+      //     if (data.user) {
+      //       setUser(JSON.stringify(data.user));
+      //       localStorage.setItem("user", JSON.stringify(data.user));
+      //       handleRedirect();
+      //     } else {
+      //       setError("no user returned");
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     setError(error.message);
+      //   })
+      //   .finally(() => setIsLoading(false));
     }
   }, []);
 
   const formik = useFormik({
     initialValues: {
       email: "",
-
       password: "",
     },
     // validationSchema: Yup.object({
@@ -151,9 +154,48 @@ function SignIn() {
     // }),
     onSubmit: (values) => {
       // alert(JSON.stringify(values, null, 2));
-      console.log("loginButt", values);
+     
+
+      let data = {};
+
+      if (rememberMe === true) {
+        data = {
+          email: values.email,
+          password: values.password,
+          role: "admin",
+        };
+      } else {
+        data = {
+          email: values.email,
+          password: values.password,
+          role: "user",
+        };
+      }
+      console.log("loginButt", data ,rememberMe);
+
+      
+      axios
+        .post("http://localhost:4000/api/users/login", data)
+        .then(function (response) {
+          console.log("chachaaaaa", response);
+          console.log("responseToken", response.data.token);
+
+          // navigate("/profile")
+
+          setUser(JSON.stringify(response.data.token));
+          localStorage.setItem("token", JSON.stringify(response.data.token));
+          alert("u have succesfull login");
+          handleRedirect();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
   });
+
+  // useEffect(() => {
+
+  // }, [])
 
   return (
     <CoverLayout
@@ -217,24 +259,26 @@ function SignIn() {
                 </SoftTypography>
               </SoftBox>
               <SoftInput
-              required
+                required
                 type="password"
                 name="password"
                 onChange={formik.handleChange}
-                  value={formik.values.username}
+                value={formik.values.username}
                 placeholder="Password"
-                
               />
             </SoftBox>
             <SoftBox display="flex" alignItems="center">
-              <Switch checked={rememberMe} onChange={handleSetRememberMe} />
+              <Switch
+                defaultChecked={rememberMe}
+                onChange={(event) => handleSetRememberMe(event.target.checked)}
+              />
               <SoftTypography
                 variant="button"
                 fontWeight="regular"
-                onClick={handleSetRememberMe}
+                // onClick={handleSetRememberMe}
                 sx={{ cursor: "pointer", userSelect: "none" }}
               >
-                &nbsp;&nbsp;Remember me
+                &nbsp;&nbsp;Are You Astrologer?
               </SoftTypography>
             </SoftBox>
             <SoftBox mt={2} mb={2} textAlign="center">

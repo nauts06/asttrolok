@@ -7,7 +7,7 @@ userRoutes.get("/",(req,res)=>{
 })
 
 userRoutes.post("/register",register)
-userRoutes.get("/login",login)
+userRoutes.post("/login",login)
 
 
 module.exports = userRoutes
