@@ -91,6 +91,9 @@ function SignIn() {
   const handleRedirect = () => {
     return navigate("/dashboard");
   };
+  const handleRedirectAdmin = () => {
+    return navigate("/admin/profile");
+  };
 
   // const setProfile = (response) => {
   //   let user = { ...response.data.user };
@@ -136,6 +139,7 @@ function SignIn() {
     initialValues: {
       email: "",
       password: "",
+      role: rememberMe,
     },
     // validationSchema: Yup.object({
     //   mobile: Yup.string()
@@ -154,48 +158,69 @@ function SignIn() {
     // }),
     onSubmit: (values) => {
       // alert(JSON.stringify(values, null, 2));
-     
-
-      let data = {};
 
       if (rememberMe === true) {
-        data = {
+        const Admindata = {
           email: values.email,
           password: values.password,
           role: "admin",
         };
+
+        axios
+          .post("http://localhost:4000/api/admin/login", Admindata)
+          .then(function (response) {
+            console.log("chachaaaaa", response);
+            console.log("astroDetails", response.data.astroDetails.role);
+            // console.log("responseToken", response.data.role);
+
+            // navigate("/profile")
+
+            setUser(JSON.stringify(response.data.token));
+            localStorage.setItem("token", JSON.stringify(response.data.token));
+            localStorage.setItem("role", response.data.astroDetails.role);
+            // alert("u have succesfull login");
+            // handleRedirect();
+
+            // if (response.data.astroDetails.role === "admin") {
+              handleRedirectAdmin();
+            // }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       } else {
-        data = {
+        const userdata = {
           email: values.email,
           password: values.password,
           role: "user",
         };
+
+        axios
+          .post("http://localhost:4000/api/users/login", userdata)
+          .then(function (response) {
+            console.log("chachaaaaa", response);
+            console.log("userDetails", response.data.userDetails.role);
+            console.log("responseToken", response.data.token);
+
+            setUser(JSON.stringify(response.data.token));
+            localStorage.setItem("token", JSON.stringify(response.data.token));
+            localStorage.setItem("role", response.data.userDetails.role);
+            // alert("u have succesfull login");
+            // handleRedirect();
+
+            if (response.data.userDetails.role === "user") {
+              handleRedirect();
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       }
-      console.log("loginButt", data ,rememberMe);
-
-      
-      axios
-        .post("http://localhost:4000/api/users/login", data)
-        .then(function (response) {
-          console.log("chachaaaaa", response);
-          console.log("responseToken", response.data.token);
-
-          // navigate("/profile")
-
-          setUser(JSON.stringify(response.data.token));
-          localStorage.setItem("token", JSON.stringify(response.data.token));
-          alert("u have succesfull login");
-          handleRedirect();
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      // console.log("loginButtLL", values);
     },
   });
 
-  // useEffect(() => {
-
-  // }, [])
+  
 
   return (
     <CoverLayout

@@ -1,13 +1,15 @@
 import React from "react";
-import { useAuth } from './auth-context/auth.context';
-import { useNavigate, Outlet } from 'react-router-dom';
+import { useAuth } from "./auth-context/auth.context";
+import { useNavigate, Outlet } from "react-router-dom";
 import SweetAlert from "react-bootstrap-sweetalert";
 
 export const ProtectedRoute = () => {
   const navigate = useNavigate();
   let { user } = useAuth();
-    return (<>
 
+  console.log("useruser",user);
+  return (
+    <>
       {/* {(!user || !user.token || user.token === "") ? (
         <SweetAlert
           title="You must be signed in!"
@@ -19,9 +21,9 @@ export const ProtectedRoute = () => {
         <Outlet />
       )} */}
 
-     {/*--------------- top rote is protected denied entry without login------------------- */}
+      {/*--------------- top rote is protected denied entry without login------------------- */}
 
-{(user === "") ? (
+      {user === "" ? (
         <SweetAlert
           title="You must be signed in!"
           onCancel={() => navigate("/authentication/sign-in")}
@@ -31,5 +33,6 @@ export const ProtectedRoute = () => {
       ) : (
         <Outlet />
       )}
-  </>);
+    </>
+  );
 };

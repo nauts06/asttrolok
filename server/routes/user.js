@@ -1,6 +1,7 @@
 const express = require("express");
 const userRoutes = express.Router();
-const { register, login,} = require("../controllers/user");
+const { register, login, profileUpdate,} = require("../controllers/user");
+const { checkLoginOrNot } = require("../middleware/auth");
 
 userRoutes.get("/",(req,res)=>{
     res.status(400).send("welcome to the user routes")

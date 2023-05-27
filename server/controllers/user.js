@@ -1,6 +1,10 @@
 const bcrypt = require("bcrypt");
 const Usermodel = require("../models/Usermodel");
 const jwt = require("jsonwebtoken");
+const AstrologerModel = require("../models/AstrologerModel");
+
+
+
 
 exports.register = async (req, res) => {
     try {
@@ -45,27 +49,36 @@ exports.register = async (req, res) => {
 
 //login
 exports.login = async (req, res) => {
-    console.log("iam working", 1);
     try {
         //collected information from frontend
-        const { email, password } = req.body
+        const { email, password,role } = req.body
 
         //validate
         if (!email || !password) {
-            console.log("iam working", 2);
             return res.status(401).send("email and password is required")
         }
         //check user in database
-        else {
+        else if(role === "admin"){
+            res.status(404).json({
+                success:false,
+                message:"this is user route not admin"
+            })
+        }
+        else if(role === "user"){
             const userDetails = await Usermodel.findOne({ email }); 
             
             if (userDetails === null) {
-                console.log("iam working", 3);
                 return res.status(401).send("email is incorrect")
             }
-            //match the password
-            if (await bcrypt.compare(password, userDetails.password)) {
-                console.log("iam working", 4);
+            else if(userDetails?.role  === "admin"){
+                return res.status(404).json({
+                    success:false,
+                    message:"you are admin, please select admin then login "
+                })
+            }
+           
+              //match the password
+              if (await bcrypt.compare(password, userDetails.password)) {
                 const token = jwt.sign({ id: userDetails._id, email }, process.env.SECRET_KEY, { expiresIn: '2h' })
                 userDetails.password = undefined
                 // userDetails.token = token
@@ -83,19 +96,15 @@ exports.login = async (req, res) => {
 
             }
             else {
-                console.log("iam working", 5);
                 return res.status(400).json({
                     success: 'false',
                     message: 'password is incorrect'
                 })
             }
         }
-        
-  
-    
+
 
     } catch (error) {
-        console.log("iam working", 6);
         return res.status(500).json({
             success: false,
             message: error.message
@@ -103,3 +112,4 @@ exports.login = async (req, res) => {
     }
 
 };
+

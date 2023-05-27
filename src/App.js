@@ -41,6 +41,7 @@ import createCache from "@emotion/cache";
 
 // Soft UI Dashboard React routes
 import routes from "./routes";
+import adminRoutes from "./adminRoutes";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 // Soft UI Dashboard React contexts
@@ -65,6 +66,8 @@ export default function App() {
 
     setRtlCache(cacheRtl);
   }, []);
+
+  console.log("layouttttt", localStorage.getItem("role"));
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
@@ -150,7 +153,7 @@ export default function App() {
               color={sidenavColor}
               brand={brand}
               brandName="Soft UI Dashboard"
-              routes={routes}
+              routes={localStorage.getItem("role") === "admin" ? adminRoutes : routes}
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />
@@ -160,7 +163,7 @@ export default function App() {
         )}
         {layout === "vr" && <Configurator />}
         <Routes>
-          {getRoutes(routes)}
+          {getRoutes(localStorage.getItem("role") === "admin" ? adminRoutes : routes)}
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
       </ThemeProvider>
@@ -173,8 +176,10 @@ export default function App() {
           <Sidenav
             color={sidenavColor}
             brand={brand}
-            brandName="Soft UI Dashboard"
-            routes={routes}
+            brandName={
+              localStorage.getItem("role") === "admin" ? "Astrologer Asttrolok" : "Asttrolok"
+            }
+            routes={localStorage.getItem("role") === "admin" ? adminRoutes : routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
           />
@@ -184,9 +189,17 @@ export default function App() {
       )}
       {layout === "vr" && <Configurator />}
       <Routes>
-        {getRoutes(routes)}
-        <Route path="*" element={<Navigate to="/dashboard" />} />
+        {getRoutes(localStorage.getItem("role") === "admin" ? adminRoutes : routes)}
+
+        {localStorage.getItem("role") === "admin" ? (
+          <Route path="*" element={<Navigate to="/admin/dashboard" />} />
+        ) : (
+          <Route path="*" element={<Navigate to="/dashboard" />} />
+        )}
       </Routes>
     </ThemeProvider>
+    // if(){
+
+    // }
   );
 }
