@@ -102,12 +102,12 @@ function Overview() {
   return (
     <DashboardLayout>
       <Header />
-      <SoftBox mt={5} mb={3}>
-        <Grid container spacing={3}>
+      <SoftBox mt={2} mb={3}>
+        {/* <Grid container spacing={3}>
           <Grid item xs={12} md={6} xl={4}>
             <PlatformSettings />
           </Grid>
-        </Grid>
+        </Grid> */}
       </SoftBox>
       <SoftBox mb={3}>
         <Card>

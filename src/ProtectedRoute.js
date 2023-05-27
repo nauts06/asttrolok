@@ -23,7 +23,7 @@ export const ProtectedRoute = () => {
 
       {/*--------------- top rote is protected denied entry without login------------------- */}
 
-      {user === "" ? (
+      {user === null  ? (
         <SweetAlert
           title="You must be signed in!"
           onCancel={() => navigate("/authentication/sign-in")}
