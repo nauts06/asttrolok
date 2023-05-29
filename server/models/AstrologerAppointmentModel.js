@@ -6,12 +6,11 @@ const AstroAppointmentsSchema = new mongoose.Schema({
         type: String,
         require: true,
     },
-    appointments: [{
-        id: {
-            type: String,
-            require: true,
-        }
-    }]
+    gender:{
+        type: String, 
+        require: true,
+    }
+   
 })
 
 module.exports  = mongoose.model("AppointmentsSchema",AstroAppointmentsSchema);

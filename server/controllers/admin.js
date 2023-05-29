@@ -340,6 +340,7 @@ exports.availableTimings = async(req,res)=>{
 
                 if(data){
                     for (let i = 0; i < data.length; i++) {
+                        // this below upsert:true is creating new docs if not available so the whole code says that update old docs and if not present create the new onces 
                         await AvailableTiming.updateMany({Day: data[i].Day, bookedBy: req.user._id}, data[i], {upsert: true});
                     }
 
