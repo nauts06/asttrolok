@@ -7,6 +7,7 @@ const AstrologerAccountSchema = new mongoose.Schema({
 
     biography: {
         type: String,
+        default:" ",
     },
     Specialization: [{
         type: String

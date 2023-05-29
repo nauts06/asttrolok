@@ -6,6 +6,10 @@ const AstrologerAppointmentModel = require("../models/AstrologerAppointmentModel
 const Usermodel = require("../models/Usermodel");
 const AstrologerDetails = require("../models/AstrologerAccountModel");
 const AstrologerAccountModel = require("../models/AstrologerAccountModel");
+const AvailableTiming = require("../models/AvailableTiming");
+
+
+
 // register
 exports.register = async (req, res) => {
     try {
@@ -96,6 +100,29 @@ exports.login = async (req, res) => {
 };
 
 
+// // get charges this is get route
+exports.getcharges = async(req,res)=>{
+    try {
+        const {internationalBookCharges,nationalBookCharges}  = req.user;
+        const data = {
+            internationalBookCharges,
+            nationalBookCharges
+        }
+        console.log(data);
+        res.status(200).json({
+            success:true,
+            message:data
+        })
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
+           }) 
+    }
+}
+
+
+
 // charges
 exports.charges = async(req, res) =>{
 
@@ -128,6 +155,7 @@ exports.charges = async(req, res) =>{
     
     
 }
+
 
 
 // appointments
@@ -172,6 +200,23 @@ exports.logout = async (req, res) => {
       res.status(400).send(error.message);
     }
   };
+
+
+// get accountDetails this is get route
+exports.getaccounts = async(req,res) =>{
+    try {
+        res.status(200).json({
+            success:true,
+            message:req.user
+        })
+    } catch (error) {
+        res.status(404).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
 
 // accounts
 exports.accounts = async (req,res)=>{
@@ -239,11 +284,33 @@ exports.changePassword = async(req,res)=>{
     
 }
 
+
+
+// get profileDetails this is get route
+exports.getprofileSettings = async(req,res) =>{
+    try {
+        res.status(200).json({
+            success:true,
+            message:req.user
+        })
+    } catch (error) {
+        res.status(404).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+
+
+
+
 exports.profileSettings = async(req,res)=>{
+    
     // this profile route is same as accounts api
     try {
         const astroDetails = await AstrologerModel.findByIdAndUpdate(req.user._id,req.body);
-    
+    console.log(astroDetails);
         const newData = await AstrologerModel.findByIdAndUpdate(req.user._id)
         res.status(200).json({
             success:true,
@@ -261,4 +328,37 @@ exports.profileSettings = async(req,res)=>{
 
 
 
+}
+
+
+// we dont need to create here a different route to update value or get default value as we have covered in this.
+exports.availableTimings = async(req,res)=>{
+    try {
+        const bookedBy = req.user._id
+        let availableTimingData = await AvailableTiming.find({bookedBy})
+        const {data} = req.body; 
+
+                if(data){
+                    for (let i = 0; i < data.length; i++) {
+                        await AvailableTiming.updateMany({Day: data[i].Day, bookedBy: req.user._id}, data[i], {upsert: true});
+                    }
+
+                    //   message:await AvailableTiming.find({bookedBy}) is for updated data
+                    return res.status(200).json({
+                        success:true,
+                        message:await AvailableTiming.find({bookedBy})
+                    })
+                }
+                else{
+                    res.status(404).json({
+                        success:false,
+                        message:"data not found"
+                    })
+                }
+    } catch (error) {
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
 }

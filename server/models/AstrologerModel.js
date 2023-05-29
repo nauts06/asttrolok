@@ -30,6 +30,7 @@ const AstrologerSchema = new mongoose.Schema({
     },
     nationalBookCharges:{
         type:Number,
+        default:"0"
     },
     role:{
         type:String,
@@ -37,13 +38,15 @@ const AstrologerSchema = new mongoose.Schema({
     },
     internationalBookCharges:{
         type:Number,
+        default:"0"
     },
     experienceInYears:{
         type:Number,
     },
     Organization:{
         type:String,
-        require:true
+        require:true,
+        default:"Asttrolok"
     },
     address:{
         type:String,

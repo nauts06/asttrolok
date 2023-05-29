@@ -7,12 +7,12 @@ exports.checkLoginOrNot = async(req, res, next) => {
   // console.log("token checker",req.cookies);
 
   const token =
-    req.cookies.token ||
-    req.body.token 
-    // req.header("Authorization").replace("Bearer ", "");
+  req.cookies.token ||
+  req.header("Authorization").replace("Bearer ", "");
+    // req.body.token 
     
   if (!token) {
-    console.log(token);
+    // console.log(token);
     
     return res.status(404).json("token is missing, Please login");
   }
