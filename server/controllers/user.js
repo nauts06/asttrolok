@@ -107,3 +107,7 @@ exports.login = async (req, res) => {
 
 };
 
+// bookings by user
+exports.booking = async(req,res)=>{
+    
+}

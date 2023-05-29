@@ -6,14 +6,13 @@ const AstrologerModel = require("../models/AstrologerModel");
 exports.checkLoginOrNot = async(req, res, next) => {
   // console.log("token checker",req.cookies);
 
-  const token =
-  req.cookies.token ||
-  req.header("Authorization").replace("Bearer ", "");
+  const token =req.header("Authorization")?.replace("Bearer ", "");
+  // req.cookies.token ||
     // req.body.token 
     
   if (!token) {
     // console.log(token);
-    
+  
     return res.status(404).json("token is missing, Please login");
   }
 
