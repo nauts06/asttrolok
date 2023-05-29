@@ -58,12 +58,6 @@ exports.login = async (req, res) => {
             return res.status(401).send("email and password is required")
         }
         //check user in database
-        else if(role === "admin"){
-            res.status(404).json({
-                success:false,
-                message:"this is user route not admin"
-            })
-        }
         else if(role === "user"){
             const userDetails = await Usermodel.findOne({ email }); 
             

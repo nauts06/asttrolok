@@ -1,5 +1,5 @@
-const mongoose = require("mongoose")
-
+const mongoose = require("mongoose");
+const AstrologerAccountModel = require("./AstrologerAccountModel");
 const AstrologerSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -37,9 +37,37 @@ const AstrologerSchema = new mongoose.Schema({
     },
     internationalBookCharges:{
         type:Number,
-    }
+    },
+    experienceInYears:{
+        type:Number,
+    },
+    Organization:{
+        type:String,
+        require:true
+    },
+    address:{
+        type:String,
+        require:true
+    },
+    areaofInterest:[{
+        type:String,
+        require:true
+    }],
+    videoType:{
+        type:String,
+    },
+    reviewVideoLink:{
+        type:String,
+    },
+    // Astrologerdetails: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Astrologer" // use the model name as a string for the ref option
+    // }
 },
 { timestamps: true }
 );
+
+// add the properties of AstrologerAccountModel to AstrologerSchema
+AstrologerSchema.add(AstrologerAccountModel.schema);
 
 module.exports  = mongoose.model("AstroPersonalDetails",AstrologerSchema);

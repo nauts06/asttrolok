@@ -12,6 +12,8 @@ exports.checkLoginOrNot = async(req, res, next) => {
     // req.header("Authorization").replace("Bearer ", "");
     
   if (!token) {
+    console.log(token);
+    
     return res.status(404).json("token is missing, Please login");
   }
 
@@ -21,6 +23,12 @@ exports.checkLoginOrNot = async(req, res, next) => {
 
 
     const {role} = req.body
+    if(!role){
+      return res.status(404).json({
+        success:"false",
+        message:"role does not found"
+      })
+    }
     if(role === "user"){
       req.user = await Usermodel.findById(decode.id)
       if(req.user?.role !== "user"){
