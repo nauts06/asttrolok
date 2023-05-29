@@ -66,6 +66,7 @@ import { FieldArray, Form, Formik, useFormik } from "formik";
 import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
 import { useState } from "react";
+import axios from "axios";
 
 function Overview() {
   const initialValues = {
@@ -124,6 +125,59 @@ function Overview() {
                 initialValues={initialValues}
                 onSubmit={(values) => {
                   console.log("valuesField", values);
+
+                  const data = {
+                    role: "admin",
+                    name: values.name,
+                    email: values.email,
+                    biography: values.biography,
+                    specialization:values.specialization,
+                    address: values.address,
+                    videoType: values.videoType,
+                    education: values.addEducation,
+                    experience: values.experience,
+                    additionalWork: values.additionalWork,
+                  };
+                 
+                  axios
+                    .post("http://localhost:4000/api/admin/accounts", data, {
+                      headers: {
+                        Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+                      },
+                    })
+                    .then((response) => {
+                      console.log("dataAccounts", response.status);
+                          if (response.status !== 200) {
+                            alert(`Unable to save this data!`);
+                          } else {
+                            alert(`Details Saved!`);
+                          }
+                    })
+                    .catch((error) => {
+                      console.log("error", error);
+                    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }}
                 render={({ values, errors, touched, handleReset, handleSelect, handleChange }) => {
                   return (

@@ -52,19 +52,22 @@ import team1 from "assets/images/team-1.jpg";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
-import { FormControl, InputLabel, MenuItem, Select, Switch, TextField } from "@mui/material";
+import { Alert, FormControl, InputLabel, MenuItem, Select, Snackbar, Switch, TextField } from "@mui/material";
 import { useFormik } from "formik";
 import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function Overview() {
+
   // const [expertise, setExpertise] = useState([]);
   const formik = useFormik({
     initialValues: {
       name: "",
       email: "",
       number: "",
+      gender: "None",
       experience: "",
       organization: "",
       address: "",
@@ -88,9 +91,61 @@ function Overview() {
     // }),
     onSubmit: (values) => {
       console.log("persInfo", values);
+
+      const data = {
+        role: "admin",
+        address: values.address,
+        email: values.email,
+        experienceInYears: values.experience,
+        areaofInterest: values.expertise,
+        gender: values.gender,
+        name: values.name,
+        mobile: values.number,
+        organization: values.organization,
+        videoType: values.videoType,
+      };
+
+      console.log();
+      axios
+        .post("http://localhost:4000/api/admin/profileSettings", data, {
+          headers: {
+            Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+          },
+        })
+        .then((response) => {
+          console.log("datahhhh", response.status);
+              if (response.status !== 200) {
+                alert(`Unable to save this data!`);
+              } else {
+                alert(`Details Saved!`);
+              }
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
     },
   });
+console.log(JSON.parse(localStorage.getItem("token")));
+  useEffect(() => {
+    console.log("its token", JSON.parse(localStorage.getItem("token")));
+    axios
+    .get("http://localhost:4000/api/admin/getprofileSettings", {
+      headers: {
+        Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+      },
+    })
+    .then((response) => {
+      console.log("kkkkkk", response);
+        
+    })
+    .catch((error) => {
+      console.log("error", error);
+    });
+
+    
+  }, [])
   
+
   return (
     <DashboardLayout>
       <Header />
@@ -157,6 +212,28 @@ function Overview() {
                       value={formik.values.number}
                       placeholder="Phone Number"
                     />
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Gender
+                      </SoftTypography>
+                    </Grid>
+                    <TextField
+                      select
+                      fullWidth
+                      required
+                      type="text"
+                      name="gender"
+                      onChange={formik.handleChange}
+                      value={formik.values.gender}
+                      placeholder="Gender"
+                    >
+                      <MenuItem value="None">Select Gender</MenuItem>
+                      <MenuItem value="Male">Male</MenuItem>
+                      <MenuItem value="Female">Female</MenuItem>
+                    </TextField>
                   </Grid>
 
                   <Grid item xs={12} md={6}>

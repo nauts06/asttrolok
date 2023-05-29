@@ -7,6 +7,7 @@ export const ProtectedRoute = () => {
   const navigate = useNavigate();
   let { user } = useAuth();
 
+  console.log("useruser",user);
   return (
     <>
       {/* {(!user || !user.token || user.token === "") ? (
@@ -22,7 +23,7 @@ export const ProtectedRoute = () => {
 
       {/*--------------- top rote is protected denied entry without login------------------- */}
 
-      {user === null  ? (
+      {user === null && localStorage.getItem("role") === "" || localStorage.getItem("role") === null  ? (
         <SweetAlert
           title="You must be signed in!"
           onCancel={() => navigate("/authentication/sign-in")}
