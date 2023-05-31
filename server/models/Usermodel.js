@@ -41,6 +41,7 @@ const UserSchema = new mongoose.Schema({
     },
     mobile:{
         type:Number,
+        
     },
     profilePicture:{
         id:String,

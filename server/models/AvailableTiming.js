@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const AstrologerModel = require("./AstrologerModel");
 
 const availableTimingSchema = mongoose.Schema({
-    Day: { type: String, enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],require:true },
+    day: { type: String, enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],require:true },
     startTime: { type: String, min: 0, max: 23, required: true, default:00}, // hour of the day
     endTime: { type: String, min: 0, max: 23, required: true, default:00 }, // hour of the day
     lunchTimeIn: { type: String, min: 0, max: 23, required: true, default:00 },

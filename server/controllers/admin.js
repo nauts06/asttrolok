@@ -2,11 +2,9 @@ require("dotenv").config;
 const AstrologerModel = require("../models/AstrologerModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const AstrologerAppointmentModel = require("../models/AstrologerAppointmentModel");
-const Usermodel = require("../models/Usermodel");
-const AstrologerDetails = require("../models/AstrologerAccountModel");
-const AstrologerAccountModel = require("../models/AstrologerAccountModel");
 const AvailableTiming = require("../models/AvailableTiming");
+const AstrologerBookingModel = require("../models/AstrologerBookingModel");
+const Usermodel = require("../models/Usermodel");
 
 
 
@@ -57,10 +55,26 @@ exports.login = async (req, res) => {
         if (!email || !password) {
             return res.status(401).send("email and password is required")
         }
-        else if(role ===  "admin"){
-            const astroDetails = await AstrologerModel.findOne({ email }); 
+    
+        else if(role){
+            let astroDetails = await AstrologerModel.findOne({ email }); 
             if (astroDetails === null) {
-                return res.status(401).send("email is incorrect")
+                astroDetails = await Usermodel.findOne({email});
+
+                if(astroDetails === null){
+                return res.status(401).json({
+                    success:false,
+                    message:"email is incorrect",
+                })
+            }
+                else if(astroDetails?.role !== role){
+
+                     return res.status(401).json({
+                    success:false,
+                    message:"you cant access this route",
+                })
+                }
+
             }
               //match the password
               if (await bcrypt.compare(password, astroDetails.password)) {
@@ -108,7 +122,7 @@ exports.getcharges = async(req,res)=>{
             internationalBookCharges,
             nationalBookCharges
         }
-        console.log(data);
+       
         res.status(200).json({
             success:true,
             message:data
@@ -160,30 +174,36 @@ exports.charges = async(req, res) =>{
 
 // appointments
 exports.appointments = async(req,res) =>{
-    try {
-        const allAppointments = AstrologerAppointmentModel.findById(req.user._id)
-        if(!allAppointments){
-        return res.status(404).json({
-            success:true,
-            message:"No appointments found",
-        })}
-        else{
-            let arr = [];
-            for(let i = 0 ;i< allAppointments.appointments.length; i++){
-                const data = await Usermodel.findById(allAppointments.appointments[i].id)
-                arr.push(data);
-            }
-            return res.status(200).json({
-                data:arr,
-                success:true,
-            })
-        }
-    } catch (error) {
+  try {
+    if(!req.user._id){
         return res.status(404).json({
             success:false,
-            message:error.message
+            message:"admin id not found"
         })
     }
+    else{
+        const astrologerId = req.user._id;
+        const astrologerBookings =  await AstrologerBookingModel.findOne({astrologerId}).populate('bookingsId.userId')
+
+        if(astrologerBookings){
+            return res.status(200).json({
+                success:true,
+                message:astrologerBookings
+            })
+        }
+        else{
+            return res.status(200).json({
+                success:true,
+                message:"no bookings found"
+            })
+        }
+    }
+  } catch (error) {
+    res.status(500).json({
+        success:false,
+        message:error.message
+    })
+  }
 
 }
 
@@ -222,7 +242,8 @@ exports.getaccounts = async(req,res) =>{
 exports.accounts = async (req,res)=>{
  
  try {
-   const astroDetails = await AstrologerModel.findByIdAndUpdate(req.user._id, req.body)
+     const astroDetails = await AstrologerModel.findByIdAndUpdate(req.user._id, req.body)
+     console.log(req.body);
    
 // actually above astrodetail is not gettingupdated after the req.body is updated data is saved in db then it is not sending the updated data into astrodetails it is sending old data 
    const newData = await AstrologerModel.findByIdAndUpdate(req.user._id)
@@ -250,7 +271,7 @@ exports.accounts = async (req,res)=>{
 
 exports.changePassword = async(req,res)=>{
     try {
-        
+      
   const {newPassword, oldPassword} = req.body;
 
 
@@ -310,13 +331,11 @@ exports.profileSettings = async(req,res)=>{
     // this profile route is same as accounts api
     try {
         const astroDetails = await AstrologerModel.findByIdAndUpdate(req.user._id,req.body);
-    console.log(astroDetails);
         const newData = await AstrologerModel.findByIdAndUpdate(req.user._id)
         res.status(200).json({
             success:true,
             message:"successfully updated values",
             data:newData,
-
         }) 
         await astroDetails.save();
     } catch (error) {
@@ -358,6 +377,115 @@ exports.availableTimings = async(req,res)=>{
                 }
     } catch (error) {
         res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+
+// for search button in appointments 
+exports.searchBookings = async (req,res)=>{
+    try {
+        const {date} = req.body
+        let searchResults = [];
+    if(!date){
+        return res.status(404).json({
+            success:false,
+            message:"please provide Date"
+        })
+    }
+    else{
+        const bookingsId = req.user._id;
+        if(!bookingsId){
+            return res.status(404).json({
+                success:false,
+                message:"astrologer id is not present in req.user"
+            })
+        }
+        const searchResultsBasedOnDate = await AstrologerBookingModel.findOne().populate('bookingsId.userId')
+        if(!searchResultsBasedOnDate){
+            return res.status(200).json({
+                success:true,
+                message:"astrologer does not have any bookings"
+            })        
+        }
+        else{
+            for (let i = 0; i < searchResultsBasedOnDate.bookingsId.length; i++) {
+                 if(date === searchResultsBasedOnDate.bookingsId[i].date){
+                    searchResults.push(searchResultsBasedOnDate.bookingsId[i])
+                 }
+            }
+        }
+        return res.status(200).json({
+            success:true,
+            message: searchResults
+        })
+    }
+    } catch (error) {
+     return res.status(500).json({
+        success:true,
+        message:error.message
+     })   
+    }
+}
+
+exports.dashboard = async (req,res)=>{
+    try {
+        if(!req?.user?._id){
+            return res.status(404).json({
+                success:false,
+                message:"admin id not found in req.user"
+            })
+        }
+        else{
+            const astrologerId = req.user._id;
+            const data =  await AstrologerBookingModel.findOne({astrologerId})
+          if(!data){
+            return res.status(404).json({
+                success:false,
+                message:"data not found"
+            })
+          }
+          else{
+           const date  = new Date;
+           const currentDate = {
+            day: String(date.getDate()).padStart(2, '0'),
+            month:String(date.getMonth()+1).padStart(2,"0"),
+            year:date.getFullYear()
+           }
+            let consultation = {
+                totalConsultation:data?.bookingsId?.length,
+                todayConsultation:0,
+                upcomingConsultation:0,
+            }
+          
+            for (let i = 0; i < data?.bookingsId?.length; i++) {
+                const day = data?.bookingsId[i].date.slice(0,2)
+                const month = data?.bookingsId[i].date.slice(3,5)
+                const year = data?.bookingsId[i].date.slice(6,10)
+    
+                
+
+                if(day === currentDate.day && month === currentDate.month && year === JSON.stringify(currentDate.year)){
+                  
+                    consultation.todayConsultation = consultation.todayConsultation + 1;
+                }
+
+                if(day > currentDate.day || month > currentDate.month || year > JSON.stringify(currentDate.year)){
+                    consultation.upcomingConsultation = consultation.upcomingConsultation + 1;
+                }                
+            }
+
+           return res.status(200).json({
+             success:true,
+             message:consultation
+         })
+          } 
+
+        }    
+    } catch (error) {
+        return res.status(500).json({
             success:false,
             message:error.message
         })

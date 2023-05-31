@@ -169,6 +169,7 @@ function SignIn() {
         axios
           .post("http://localhost:4000/api/admin/login", Admindata)
           .then(function (response) {
+              
             console.log("chachaaaaa", response);
             console.log("astroDetails", response.data.astroDetails.role);
             // console.log("responseToken", response.data.role);
@@ -186,6 +187,7 @@ function SignIn() {
             // }
           })
           .catch(function (error) {
+            setError(error?.response?.data?.message)
             console.log(error);
           });
       } else {
@@ -213,7 +215,8 @@ function SignIn() {
             }
           })
           .catch(function (error) {
-            console.log(error);
+            console.log("error",error);
+            setError(error?.response?.data?.message)
           });
       }
       // console.log("loginButtLL", values);
@@ -255,9 +258,10 @@ function SignIn() {
           {/* <Separator /> */}
           <form onSubmit={formik.handleSubmit}>
             {/* <SoftBox component="form" role="form"> */}
+            
             <SoftBox mb={2}>
               <SoftBox mb={1} ml={0.5}>
-                <SoftTypography component="label" variant="caption" fontWeight="bold">
+                <SoftTypography  component="label" variant="caption" fontWeight="bold">
                   Email
                 </SoftTypography>
               </SoftBox>
@@ -268,6 +272,7 @@ function SignIn() {
                 variant="outlined" /> */}
 
               <TextField
+              onClick={()=>setError(" ")}
                 fullWidth
                 required
                 type="email"
@@ -284,6 +289,7 @@ function SignIn() {
                 </SoftTypography>
               </SoftBox>
               <SoftInput
+              onClick={()=>setError(" ")}
                 required
                 type="password"
                 name="password"

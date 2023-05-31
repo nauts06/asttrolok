@@ -4,12 +4,12 @@ const Usermodel = require("./Usermodel")
 
 const AstrologerBookingSchema =  mongoose.Schema({
     astrologerId:{
-        type: mongoose.Schema.Types.ObjectId, ref: "AstrologerModel"
+        type: mongoose.Schema.Types.ObjectId, ref: AstrologerModel,
     },
     bookingsId:[
         {
             userId:{
-                type: mongoose.Schema.Types.ObjectId, ref: "Usermodel",
+                type: mongoose.Schema.Types.ObjectId, ref: Usermodel,
                 require:true,
             },
             date:{
@@ -23,5 +23,5 @@ const AstrologerBookingSchema =  mongoose.Schema({
         }
     ]
 
-})
+},{ timestamps: true })
 module.exports  = mongoose.model("astrologerbookingschema",AstrologerBookingSchema);
