@@ -114,17 +114,6 @@ const adminRoutes = [
     noCollapse: true,
     protected: true,
   },
-  {
-
-    type: "collapse",
-    name: "Dashboard",
-    key: "Dashboard",
-    route: "/admin/dashboard",
-    icon: <CustomerSupport size="12px" />,
-    component: <Dashboard />,
-    noCollapse: true,
-    protected: true,
-  },
 ];
 
 export default adminRoutes;
