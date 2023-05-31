@@ -13,13 +13,13 @@ const AstrologerAccountSchema = new mongoose.Schema({
         type: String
     }],
     education: [{
-        deree: {
+        degree: {
             type: String,
         },
-        college: {
+        institute: {
             type: String,
         },
-        yearOfCompletion: {
+        yoc: {
             type: Number,
         }
     }],

@@ -71,12 +71,13 @@ import TagsInput from "react-tagsinput";
 import "react-tagsinput/react-tagsinput.css";
 function Overview() {
   const [tags, setTags] = useState([]);
+  const [check, setCheck] = useState("");
 
   const handleTagsChange = (tags) => {
     setTags(tags);
   };
-
-  const initialValues = {
+// console.log("Valtags",tags);
+  let initialValues = {
     name: "",
     email: "",
     biography: "",
@@ -106,9 +107,9 @@ function Overview() {
       },
     ],
   };
-  let fetchData ={}
+
   useEffect(() => {
-     fetchData = async () => {
+    const fetchData = async () => {
       try {
         axios
           .get("http://localhost:4000/api/admin/getaccounts", {
@@ -120,18 +121,24 @@ function Overview() {
             },
           })
           .then((response) => {
-            // console.log("response", response.status);
+            console.log("response", response.data?.message?.specialization);
+            // console.log("Valtags",response.data?.message?.specialization);
+            console.log("Valtags",tags);
+            setTags(response.data?.message?.specialization)
             if (response.status === 200) {
               (initialValues.name = response.data?.message?.name),
                 (initialValues.email = response.data?.message?.email),
                 (initialValues.biography = response.data?.message?.biography),
                 (initialValues.address = response.data?.message?.address),
-                (initialValues.specialization = tags),
+                (initialValues.specialization = response.data?.message?.specialization),
                 (initialValues.videoType = response.data?.message?.videoType),
                 // (initialValues.experience = );
-                (initialValues.experience = response.data?.message?.experience.map((elem, i) => {
+                (initialValues.addEducation = response.data?.message?.education.map((elem, i) => {
                   return elem;
                 }));
+              initialValues.experience = response.data?.message?.experience.map((elem, i) => {
+                return elem;
+              });
               initialValues.additionalWork = response.data?.message?.additionalWork.map(
                 (elem, i) => {
                   return elem;
@@ -143,19 +150,21 @@ function Overview() {
         // Handle any errors
         console.error(error);
       }
+
+      console.log("asdfjklkjhgf", initialValues.specialization);
     };
 
     fetchData();
 
     // .catch((error) => {
-    //   console.log("error", error);
+    console.log("error", check);
     // });
   }, []);
 
   useEffect(() => {
     setTimeout(() => {
-      return fetchData(), console.log("working....");
-    }, 4000);
+      return setCheck("duality"), console.log("working....");
+    }, 1000);
   }, []);
 
   return (
@@ -191,7 +200,7 @@ function Overview() {
                     name: values.name,
                     email: values.email,
                     biography: values.biography,
-                    specialization: values.specialization,
+                    specialization: tags,
                     address: values.address,
                     videoType: values.videoType,
                     education: values.addEducation,
@@ -285,37 +294,16 @@ function Overview() {
                               Services and Specialization
                             </SoftTypography>
                           </Grid>
-                          {/* <FormControl fullWidth>
-                          
-                            <Select
-                              fullWidth
-                              multiple
-                              name="specialization"
-                              // defaultValue={["None"] || values.specialization}
-                               value={[values.specialization]}
-                              onChange={handleChange}
-                              // input={<OutlinedInput label="Name" />}
-                              // MenuProps={MenuProps}Video Type
-                            >
-                              <MenuItem value="None">Select Specialization</MenuItem>
-                              <MenuItem value="Marriage">Marriage</MenuItem>
-                              <MenuItem value="Career">Career</MenuItem>
-                              <MenuItem value="Vaastu">Vaastu</MenuItem>
-                              <MenuItem value="Remedies">Remedies</MenuItem>
-                              <MenuItem value="Vaidic Jyotish">Vaidic Jyotish</MenuItem>
-                              <MenuItem value="Health">Health</MenuItem>
-                            </Select>
-                          </FormControl> */}
 
-                          {/* <TagsInput
+                          <TagsInput
                             name="specialization"
-                            value={values.specialization  }
-                             defaultValue={values.specialization  || tags}
-                            onChange={(event)=>{
-                              handleChange(event),
-                              handleTagsChange(event.target.value)
-                            }}
-                          /> */}
+                            value={tags}
+                             defaultValue={values.specialization || tags}
+                            onChange={handleTagsChange}
+                            // onChange={(event) => {
+                            //   handleChange(event), handleTagsChange(event.target.value);
+                            // }}
+                          />
                         </Grid>
 
                         <Grid item xs={12} md={6}>
@@ -385,7 +373,7 @@ function Overview() {
                                   </Grid>
                                 </Grid>
                                 {values.addEducation.length > 0 &&
-                                  values.addEducation.map((friend, index) => (
+                                  values.addEducation.map((values, index) => (
                                     <Box style={{ display: "flex", gap: "2%" }} key={index}>
                                       <Grid xs={12} md={3} mt={1}>
                                         <SoftInput
@@ -393,7 +381,7 @@ function Overview() {
                                           type="text"
                                           name={`addEducation.${index}.degree`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.degree}
                                           placeholder="Degree"
                                         />
                                       </Grid>
@@ -403,7 +391,7 @@ function Overview() {
                                           type="text"
                                           name={`addEducation.${index}.institute`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.institute}
                                           placeholder="College / Institute"
                                         />
                                       </Grid>
@@ -413,7 +401,7 @@ function Overview() {
                                           type="text"
                                           name={`addEducation.${index}.yoc`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.yoc}
                                           placeholder="Year Of Completion"
                                         />
                                       </Grid>
