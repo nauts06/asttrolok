@@ -43,7 +43,7 @@ const AstrologerSchema = new mongoose.Schema({
     experienceInYears:{
         type:Number,
     },
-    Organization:{
+    organization:{
         type:String,
         require:true,
         default:"Asttrolok"

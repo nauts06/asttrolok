@@ -67,7 +67,7 @@ export default function App() {
     setRtlCache(cacheRtl);
   }, []);
 
-  console.log("layouttttt", localStorage.getItem("role"));
+  // console.log("layouttttt", localStorage.getItem("role"));
 
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {

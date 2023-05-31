@@ -65,16 +65,23 @@ import {
 import { FieldArray, Form, Formik, useFormik } from "formik";
 import SoftInput from "components/SoftInput";
 import SoftButton from "components/SoftButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-
+import TagsInput from "react-tagsinput";
+import "react-tagsinput/react-tagsinput.css";
 function Overview() {
+  const [tags, setTags] = useState([]);
+
+  const handleTagsChange = (tags) => {
+    setTags(tags);
+  };
+
   const initialValues = {
     name: "",
     email: "",
     biography: "",
     address: "",
-    specialization: [""],
+    specialization: ["None"],
     videoType: "None",
     addEducation: [
       {
@@ -100,6 +107,51 @@ function Overview() {
     ],
   };
 
+ useEffect(() => {
+  const timer = setTimeout(() => {
+    console.log('This will run after 1 second!')
+    initialValues.specialization = tags
+  }, 4000);
+  return () => clearTimeout(timer);
+ }, [])
+ 
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:4000/api/admin/getaccounts", {
+        params: {
+          role: "admin",
+        },
+        headers: {
+          Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+        },
+      })
+      .then((response) => {
+       
+
+        // setTags(response.data?.message?.specialization);
+        initialValues.name = response.data?.message?.name;
+        (initialValues.email = response.data?.message?.email),
+          (initialValues.biography = response.data?.message?.biography),
+          (initialValues.address = response.data?.message?.address),
+         (initialValues.specialization = tags),
+          (initialValues.videoType = response.data?.message?.videoType),
+          // (initialValues.experience = );
+          (initialValues.experience = response.data?.message?.experience.map((elem, i) => {
+            return elem;
+          }));
+        initialValues.additionalWork = response.data?.message?.additionalWork.map((elem, i) => {
+          return elem;
+        });
+        console.log("kkkkkk", response.data.message);
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+
+      console.log("tagsVal",tags);
+  }, []);
+
   return (
     <DashboardLayout>
       <Header />
@@ -122,6 +174,8 @@ function Overview() {
               {/* -----------------write here=------------------------------------------------ */}
 
               <Formik
+                // enableReinitialize={true}
+                // validateOnChange={true}
                 initialValues={initialValues}
                 onSubmit={(values) => {
                   console.log("valuesField", values);
@@ -131,14 +185,14 @@ function Overview() {
                     name: values.name,
                     email: values.email,
                     biography: values.biography,
-                    specialization:values.specialization,
+                    specialization: values.specialization,
                     address: values.address,
                     videoType: values.videoType,
                     education: values.addEducation,
                     experience: values.experience,
                     additionalWork: values.additionalWork,
                   };
-                 
+
                   axios
                     .post("http://localhost:4000/api/admin/accounts", data, {
                       headers: {
@@ -147,39 +201,25 @@ function Overview() {
                     })
                     .then((response) => {
                       console.log("dataAccounts", response.status);
-                          if (response.status !== 200) {
-                            alert(`Unable to save this data!`);
-                          } else {
-                            alert(`Details Saved!`);
-                          }
+                      if (response.status !== 200) {
+                        alert(`Unable to save this data!`);
+                      } else {
+                        alert(`Details Saved!`);
+                      }
                     })
                     .catch((error) => {
                       console.log("error", error);
                     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 }}
-                render={({ values, errors, touched, handleReset, handleSelect, handleChange }) => {
+                render={({
+                  setValues,
+                  values,
+                  errors,
+                  touched,
+                  handleReset,
+                  handleSelect,
+                  handleChange,
+                }) => {
                   return (
                     <Form>
                       <Grid container spacing={2}>
@@ -194,8 +234,11 @@ function Overview() {
                             required
                             type="text"
                             name="name"
+                            // onChange={(event) => (
+                            //   handleChange(event), handleSetVal(event, setValues(),setFieldValue,values)
+                            // )}
                             onChange={handleChange}
-                            // value={values.name}
+                             value={values.name}
                             placeholder="Name"
                           />
                         </Grid>
@@ -210,7 +253,7 @@ function Overview() {
                             type="email"
                             name="email"
                             onChange={handleChange}
-                            // value={values.email}
+                            value={values.email}
                             placeholder="Email"
                           />
                         </Grid>
@@ -225,7 +268,7 @@ function Overview() {
                             type="text"
                             name="biography"
                             onChange={handleChange}
-                            // value={values.biography}
+                            value={values.biography}
                             placeholder="Biography"
                           />
                         </Grid>
@@ -236,14 +279,14 @@ function Overview() {
                               Services and Specialization
                             </SoftTypography>
                           </Grid>
-                          <FormControl fullWidth>
-                            {/* <InputLabel id="demo-multiple-name-label">Name</InputLabel> */}
+                          {/* <FormControl fullWidth>
+                          
                             <Select
                               fullWidth
                               multiple
                               name="specialization"
-                              defaultValue={["None"]}
-                              // value={values.videoType}
+                              // defaultValue={["None"] || values.specialization}
+                               value={[values.specialization]}
                               onChange={handleChange}
                               // input={<OutlinedInput label="Name" />}
                               // MenuProps={MenuProps}Video Type
@@ -256,7 +299,17 @@ function Overview() {
                               <MenuItem value="Vaidic Jyotish">Vaidic Jyotish</MenuItem>
                               <MenuItem value="Health">Health</MenuItem>
                             </Select>
-                          </FormControl>
+                          </FormControl> */}
+
+                          {/* <TagsInput
+                            name="specialization"
+                            value={values.specialization  }
+                             defaultValue={values.specialization  || tags}
+                            onChange={(event)=>{
+                              handleChange(event),
+                              handleTagsChange(event.target.value)
+                            }}
+                          /> */}
                         </Grid>
 
                         <Grid item xs={12} md={6}>
@@ -270,6 +323,7 @@ function Overview() {
                             type="text"
                             name="address"
                             onChange={handleChange}
+                            value={values.address}
                             placeholder="Address"
                           />
                         </Grid>
@@ -287,6 +341,7 @@ function Overview() {
                             name="videoType"
                             onChange={handleChange}
                             defaultValue="None"
+                            value={values.videoType || "None"}
                             placeholder="Video Type"
                           >
                             <MenuItem value="None">Select Video Type</MenuItem>
@@ -372,6 +427,7 @@ function Overview() {
                             )}
                           />
                         </Grid>
+
                         <Grid item xs={12}>
                           <FieldArray
                             name="experience"
@@ -406,15 +462,16 @@ function Overview() {
                                   </Grid>
                                 </Grid>
                                 {values.experience.length > 0 &&
-                                  values.experience.map((friend, index) => (
+                                  values.experience.map((values, index) => (
                                     <Box style={{ display: "flex", gap: "2%" }} key={index}>
                                       <Grid xs={12} md={4.5} mt={1}>
+                                        {console.log("qawsedqwe", values)}
                                         <SoftInput
                                           required
                                           type="text"
                                           name={`experience.${index}.organizationName`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.organizationName}
                                           placeholder="Organization Name"
                                         />
                                       </Grid>
@@ -424,7 +481,7 @@ function Overview() {
                                           type="text"
                                           name={`experience.${index}.from`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.from}
                                           placeholder="From"
                                         />
                                       </Grid>
@@ -434,7 +491,7 @@ function Overview() {
                                           type="text"
                                           name={`experience.${index}.to`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.to}
                                           placeholder="To"
                                         />
                                       </Grid>
@@ -444,7 +501,7 @@ function Overview() {
                                           type="text"
                                           name={`experience.${index}.designation`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.designation}
                                           placeholder="Designation"
                                         />
                                       </Grid>
@@ -497,7 +554,7 @@ function Overview() {
                                   </Grid>
                                 </Grid>
                                 {values.additionalWork.length > 0 &&
-                                  values.additionalWork.map((friend, index) => (
+                                  values.additionalWork.map((values, index) => (
                                     <Box style={{ display: "flex", gap: "2%" }} key={index}>
                                       <Grid xs={12} md={3} mt={1}>
                                         <SoftInput
@@ -505,7 +562,7 @@ function Overview() {
                                           type="text"
                                           name={`additionalWork.${index}.awards`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.awards}
                                           placeholder="Awards"
                                         />
                                       </Grid>
@@ -515,7 +572,7 @@ function Overview() {
                                           type="text"
                                           name={`additionalWork.${index}.description`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.description}
                                           placeholder="Description"
                                         />
                                       </Grid>
@@ -525,7 +582,7 @@ function Overview() {
                                           type="text"
                                           name={`additionalWork.${index}.year`}
                                           onChange={handleChange}
-                                          // value={values.education}
+                                          value={values.year}
                                           placeholder="Year"
                                         />
                                       </Grid>

@@ -72,15 +72,8 @@ function Overview() {
   // const [expertise, setExpertise] = useState([]);
   const formik = useFormik({
     initialValues: {
-      name: "",
-      email: "",
-      mobile: "",
-      gender: "None",
-      experienceInYears: "",
-      organization: "",
-      address: "",
-      areaofInterest: [""],
-      videoType: "None",
+      national: 0,
+      international: 0,
     },
     // validationSchema: Yup.object({
     //   mobile: Yup.string()
@@ -102,20 +95,14 @@ function Overview() {
 
       const data = {
         role: "admin",
-        name: values.name,
-        email: values.email,
-        mobile: values.mobile,
-        address: values.address,
-        gender: values.gender,
-        experienceInYears: values.experienceInYears,
-        organization: values.organization,
-        areaofInterest: values.areaofInterest,
-        videoType: values.videoType,
+        nationalBookCharges: values.national,
+        internationalBookCharges: values.international,
       };
 
-      console.log();
+      console.log("persInfo", data);
+
       axios
-        .post("http://localhost:4000/api/admin/profileSettings", data, {
+        .post("http://localhost:4000/api/admin/charges", data, {
           headers: {
             Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
           },
@@ -133,27 +120,37 @@ function Overview() {
         });
     },
   });
-  console.log(JSON.parse(localStorage.getItem("token")));
-
-  const { setValues } = formik;
 
   useEffect(() => {
     // console.log("its token", JSON.parse(localStorage.getItem("token")));
+    // axios
+    // .get("",{role:'admin'}, {
+    //   headers: {
+    //     Authorization: "Bearer " + JSON.parse(),
+    //   },
+    // })
+    // .then((response) => {
+    //   console.log("kkkkkk", response);
+
+    // })
+    // .catch((error) => {
+    //   console.log("error", error);
+    // });
+
+    const roles = { role: "admin" };
     axios
-      .get("http://localhost:4000/api/admin/getprofileSettings", {
-        params: {
-          role: "admin",
-        },
+      .get("http://localhost:4000/api/admin/getcharges", roles, {
         headers: {
-          Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NzBhYjgzZDE0ZmNjNWIwNjgyOTM3MyIsImVtYWlsIjoibmF1dHNjb2RlQGdtYWlsLmNvbSIsImlhdCI6MTY4NTM2MTIzOSwiZXhwIjoxNjg1MzY4NDM5fQ.QnntzxiOkkGH1J7M0vhZ1k9vwl0G7yjBRIHseHCcEJk`,
         },
       })
-      .then((response) => {
-        console.log("kkkkkk", response);
-        setValues(response.data.message);
+      .then((response) => {   
+        // Handle the response
+        console.log(response);
       })
       .catch((error) => {
-        console.log("error", error);
+        // Handle the error
+        console.error(error);
       });
   }, []);
 
@@ -172,189 +169,43 @@ function Overview() {
           <SoftBox pt={2} px={2}>
             <SoftBox mb={0.5}>
               <SoftTypography variant="h6" fontWeight="medium">
-                Personal Information
+                Charges Amount
               </SoftTypography>
             </SoftBox>
-            <SoftBox mb={1}>
+            <SoftBox mt={2} mb={1}>
               <form onSubmit={formik.handleSubmit}>
-                {console.log("asdfghjkjhg", formik.values)}
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
                     <Grid mb={1} ml={0.5}>
                       <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        Name
+                        National Book Charges:
                       </SoftTypography>
                     </Grid>
                     <TextField
                       fullWidth
                       required
-                      type="text"
-                      name="name"
+                      type="number"
+                      name="national"
                       onChange={formik.handleChange}
-                      value={formik.values.name}
-                      placeholder="Name"
+                      value={formik.values.national}
+                      placeholder=" Enter National Book Charges"
                     />
                   </Grid>
                   <Grid item xs={12} md={6}>
                     <Grid mb={1} ml={0.5}>
                       <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        Email
-                      </SoftTypography>
-                    </Grid>
-                    <SoftInput
-                      required
-                      type="email"
-                      name="email"
-                      onChange={formik.handleChange}
-                      value={formik.values.email}
-                      placeholder="Email"
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Grid mb={1} ml={0.5}>
-                      <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        Phone Number
+                        International Book Charges:
                       </SoftTypography>
                     </Grid>
                     <SoftInput
                       required
                       type="number"
-                      name="mobile"
+                      name="international"
                       onChange={formik.handleChange}
-                      value={formik.values.mobile}
-                      placeholder="Phone Number"
+                      value={formik.values.international}
+                      placeholder=" Enter International Book Charges:"
                     />
                   </Grid>
-
-                  <Grid item xs={12} md={6}>
-                    <Grid mb={1} ml={0.5}>
-                      <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        Gender
-                      </SoftTypography>
-                    </Grid>
-                    <TextField
-                      select
-                      fullWidth
-                      required
-                      type="text"
-                      name="gender"
-                      onChange={formik.handleChange}
-                      value={formik.values.gender}
-                      placeholder="Gender"
-                    >
-                      <MenuItem value="None">Select Gender</MenuItem>
-                      <MenuItem value="Male">Male</MenuItem>
-                      <MenuItem value="Female">Female</MenuItem>
-                    </TextField>
-                  </Grid>
-
-                  <Grid item xs={12} md={6}>
-                    <Grid mb={1} ml={0.5}>
-                      <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        Experience
-                      </SoftTypography>
-                    </Grid>
-                    <SoftInput
-                      required
-                      type="number"
-                      name="experienceInYears"
-                      onChange={formik.handleChange}
-                      value={formik.values.experienceInYears}
-                      placeholder="Experience"
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Grid mb={1} ml={0.5}>
-                      <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        Organization
-                      </SoftTypography>
-                    </Grid>
-                    <SoftInput
-                      required
-                      type="text"
-                      name="organization"
-                      onChange={formik.handleChange}
-                      value={formik.values.organization}
-                      placeholder="Organization"
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Grid mb={1} ml={0.5}>
-                      <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        Address
-                      </SoftTypography>
-                    </Grid>
-                    <SoftInput
-                      required
-                      type="text"
-                      name="address"
-                      onChange={formik.handleChange}
-                      value={formik.values.address}
-                      placeholder="Address"
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Grid mb={1} ml={0.5}>
-                      <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        Area of Interest / Expertise
-                      </SoftTypography>
-                    </Grid>
-                    <FormControl fullWidth>
-                      {/* <InputLabel id="demo-multiple-name-label">Name</InputLabel> */}
-                      <Select
-                        fullWidth
-                        multiple
-                        name="areaofInterest"
-                        value={formik.values.areaofInterest}
-                        // value={formik.values.videoType}
-                        onChange={formik.handleChange}
-                        // input={<OutlinedInput label="Name" />}
-                        // MenuProps={MenuProps}Video Type
-                      >
-                        <MenuItem value="">Select Expertise</MenuItem>
-                        <MenuItem value="Astrology">Astrology</MenuItem>
-                        <MenuItem value="Palmistry">Palmistry</MenuItem>
-                        <MenuItem value="Numerology">Numerology</MenuItem>
-                        <MenuItem value="Ayurveda">Ayurveda</MenuItem>
-                        <MenuItem value="Vaastu">Vaastu</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-
-                  <Grid item xs={12} md={6}>
-                    <Grid mb={1} ml={0.5}>
-                      <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        Video Type
-                      </SoftTypography>
-                    </Grid>
-                    <TextField
-                      required
-                      fullWidth
-                      select
-                      name="videoType"
-                      onChange={formik.handleChange}
-                      value={formik.values.videoType}
-                      placeholder="Video Type"
-                    >
-                      <MenuItem value="None">Select Video Type</MenuItem>
-                      <MenuItem value="Vimeo">Vimeo</MenuItem>
-                      <MenuItem value="YouTube">YouTube</MenuItem>
-                    </TextField>
-                  </Grid>
-                  {/* <SoftBox display="flex" alignItems="center">
-                  <Switch
-                    defaultChecked={true}
-                    // onChange={(event) => handleSetRememberMe(event.target.checked)}
-                  />
-                  <SoftTypography
-                    variant="button"
-                    fontWeight="regular"
-                    // onClick={handleSetRememberMe}
-                    sx={{ cursor: "pointer", userSelect: "none" }}
-                  >
-                    &nbsp;&nbsp;Are You Astrologer?
-                  </SoftTypography>
-                </SoftBox> */}
                   <SoftBox mt={2} mb={2} textAlign="center">
                     <h6
                       style={{

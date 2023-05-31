@@ -48,6 +48,7 @@ import SignUp from "layouts/authentication/sign-up";
 import SignOut from "layouts/authentication/sign-out";
 import Profile from "layouts/Admin/profile";
 import Accounts from "layouts/Admin/accounts";
+import ChargesAmount from "layouts/Admin/chargesAmount";
 
 // Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
@@ -87,6 +88,16 @@ const adminRoutes = [
     route: "/admin/accounts",
     icon: <CustomerSupport size="12px" />,
     component: <Accounts />,
+    noCollapse: true,
+    protected: true,
+  },
+  {
+    type: "collapse",
+    name: "ChargesAmount",
+    key: "chargesAmount",
+    route: "/admin/charges-Amount",
+    icon: <CustomerSupport size="12px" />,
+    component: <ChargesAmount />,
     noCollapse: true,
     protected: true,
   },

@@ -7,7 +7,7 @@ export const ProtectedRoute = () => {
   const navigate = useNavigate();
   let { user } = useAuth();
 
-  console.log("useruser",user);
+  // console.log("useruser",user);
   return (
     <>
       {/* {(!user || !user.token || user.token === "") ? (
