@@ -106,50 +106,56 @@ function Overview() {
       },
     ],
   };
+  let fetchData ={}
+  useEffect(() => {
+     fetchData = async () => {
+      try {
+        axios
+          .get("http://localhost:4000/api/admin/getaccounts", {
+            params: {
+              role: "admin",
+            },
+            headers: {
+              Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+            },
+          })
+          .then((response) => {
+            // console.log("response", response.status);
+            if (response.status === 200) {
+              (initialValues.name = response.data?.message?.name),
+                (initialValues.email = response.data?.message?.email),
+                (initialValues.biography = response.data?.message?.biography),
+                (initialValues.address = response.data?.message?.address),
+                (initialValues.specialization = tags),
+                (initialValues.videoType = response.data?.message?.videoType),
+                // (initialValues.experience = );
+                (initialValues.experience = response.data?.message?.experience.map((elem, i) => {
+                  return elem;
+                }));
+              initialValues.additionalWork = response.data?.message?.additionalWork.map(
+                (elem, i) => {
+                  return elem;
+                }
+              );
+            }
+          });
+      } catch (error) {
+        // Handle any errors
+        console.error(error);
+      }
+    };
 
- useEffect(() => {
-  const timer = setTimeout(() => {
-    console.log('This will run after 1 second!')
-    initialValues.specialization = tags
-  }, 4000);
-  return () => clearTimeout(timer);
- }, [])
- 
+    fetchData();
+
+    // .catch((error) => {
+    //   console.log("error", error);
+    // });
+  }, []);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:4000/api/admin/getaccounts", {
-        params: {
-          role: "admin",
-        },
-        headers: {
-          Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
-        },
-      })
-      .then((response) => {
-       
-
-        // setTags(response.data?.message?.specialization);
-        initialValues.name = response.data?.message?.name;
-        (initialValues.email = response.data?.message?.email),
-          (initialValues.biography = response.data?.message?.biography),
-          (initialValues.address = response.data?.message?.address),
-         (initialValues.specialization = tags),
-          (initialValues.videoType = response.data?.message?.videoType),
-          // (initialValues.experience = );
-          (initialValues.experience = response.data?.message?.experience.map((elem, i) => {
-            return elem;
-          }));
-        initialValues.additionalWork = response.data?.message?.additionalWork.map((elem, i) => {
-          return elem;
-        });
-        console.log("kkkkkk", response.data.message);
-      })
-      .catch((error) => {
-        console.log("error", error);
-      });
-
-      console.log("tagsVal",tags);
+    setTimeout(() => {
+      return fetchData(), console.log("working....");
+    }, 4000);
   }, []);
 
   return (
@@ -238,7 +244,7 @@ function Overview() {
                             //   handleChange(event), handleSetVal(event, setValues(),setFieldValue,values)
                             // )}
                             onChange={handleChange}
-                             value={values.name}
+                            value={values.name}
                             placeholder="Name"
                           />
                         </Grid>
