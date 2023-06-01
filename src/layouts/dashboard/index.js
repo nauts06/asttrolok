@@ -41,6 +41,7 @@ import OrderOverview from "layouts/dashboard/components/OrderOverview";
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
+import { Typography } from "@mui/material";
 
 function Dashboard() {
   const { size } = typography;
@@ -48,8 +49,8 @@ function Dashboard() {
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
-      <SoftBox py={3}>
+      {/* <DashboardNavbar /> */}
+      {/* <SoftBox py={3}>
         <SoftBox mb={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6} xl={3}>
@@ -143,7 +144,9 @@ function Dashboard() {
             <OrderOverview />
           </Grid>
         </Grid>
-      </SoftBox>
+      </SoftBox> */}
+
+      <Typography>lorem masmca sknfjnw wkcmkwmc dwnknckw jkcmwksnc</Typography>
       <Footer />
     </DashboardLayout>
   );
