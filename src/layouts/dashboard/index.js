@@ -147,7 +147,7 @@ function Dashboard() {
       </SoftBox> */}
 
       <Typography>lorem masmca sknfjnw wkcmkwmc dwnknckw jkcmwksnc</Typography>
-      <Footer />
+      {/* <Footer /> */}
     </DashboardLayout>
   );
 }

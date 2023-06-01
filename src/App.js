@@ -171,9 +171,10 @@ export default function App() {
   ) : (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {layout === "dashboard" && (
+      {layout === "dashboard"
+       && (
         <>
-          <Sidenav
+          {/* <Sidenav
             color={sidenavColor}
             brand={brand}
             brandName={
@@ -182,9 +183,9 @@ export default function App() {
             routes={localStorage.getItem("role") === "admin" ? adminRoutes : routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}
-          />
-          <Configurator />
-          {configsButton}
+          /> */}
+          {/* <Configurator /> */}
+          {/* {configsButton} */}
         </>
       )}
       {layout === "vr" && <Configurator />}
