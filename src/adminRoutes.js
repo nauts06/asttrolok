@@ -50,6 +50,7 @@ import Profile from "layouts/Admin/profile";
 import Accounts from "layouts/Admin/accounts";
 import ChargesAmount from "layouts/Admin/chargesAmount";
 import ChangePassword from "layouts/Admin/changePassword";
+import AvailableTimming from "layouts/Admin/availableTimming";
 
 // Soft UI Dashboard React icons
 import Shop from "examples/Icons/Shop";
@@ -63,14 +64,14 @@ import Cube from "examples/Icons/Cube";
 
 const adminRoutes = [
   {
-    type: "collapse",
+    // type: "collapse",
     name: "Dashboard",
     key: "dashboard",
     route: "/admin/dashboard",
     icon: <Shop size="12px" />,
     component: <Dashboard />,
-    noCollapse: true,
-    protected: true,
+    // noCollapse: true,
+    // protected: false,
   },
   {
     type: "collapse",
@@ -111,6 +112,17 @@ const adminRoutes = [
     route: "/admin/change-password",
     icon: <CustomerSupport size="12px" />,
     component: <ChangePassword />,
+    noCollapse: true,
+    protected: true,
+  },
+  {
+
+    type: "collapse",
+    name: "AvailableTimming",
+    key: "availableTimming",
+    route: "/admin/available/timming",
+    icon: <CustomerSupport size="12px" />,
+    component: <AvailableTimming />,
     noCollapse: true,
     protected: true,
   },

@@ -66,7 +66,7 @@ const routes = [
     icon: <Shop size="12px" />,
     component: <Dashboard />,
     noCollapse: true,
-    protected: true,
+    // protected: true,
   },
   {
     type: "collapse",

@@ -54,6 +54,8 @@ import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 import {
   Alert,
+  Box,
+  Button,
   FormControl,
   InputLabel,
   MenuItem,
@@ -68,12 +70,73 @@ import SoftButton from "components/SoftButton";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+import { DataGrid } from "@mui/x-data-grid";
 function Overview() {
-  // const [expertise, setExpertise] = useState([]);
+  const [monday, setMonday] = useState(false);
+  console.log("asdfghj", monday);
+
+  const columns = [
+    { field: "id", headerName: "Days", width: 150 },
+    {
+      field: "firstName",
+      headerName: "Status",
+      width: 150,
+      editable: true, 
+      renderCell: (row) => (
+        <Switch/>
+      ),
+    },
+    {
+      field: "lastName",
+      headerName: "Start Time",
+      width: 150,
+      editable: true,
+      renderCell: (row) => (
+        <TextField type="time"/>
+      ),
+    },
+    {
+      field: "age",
+      headerName: "End Time",
+      type: "number",
+      width: 150,
+      editable: true,
+      renderCell: (row) => (
+        <TextField type="time"/>
+      ),
+    },
+    {
+      // field: "fullName",
+      // headerName: "Full name",
+      // description: "This column has a value getter and is not sortable.",
+      // sortable: false,
+      // width: 160,
+      // valueGetter: (params: GridValueGetterParams) =>
+      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+    },
+  ];
+
+  const rows = [
+    { id: "Monday", lastName: "Snow", firstName: "Jon", age: 35 },
+    { id: "Tuesday", lastName: "Lannister", firstName: "Cersei", age: 42 },
+    { id: "Wednesday", lastName: "Lannister", firstName: "Jaime", age: 45 },
+    { id: "Thursday", lastName: "Stark", firstName: "Arya", age: 16 },
+    { id: "Friday", lastName: "Targaryen", firstName: "Daenerys", age: null },
+    { id: "Saturday", lastName: "Melisandre", firstName: null, age: 150 },
+    { id: "Sunday", lastName: "Clifford", firstName: "Ferrara", age: 44 },
+  ];
+
   const formik = useFormik({
     initialValues: {
-      nationalBookCharges: 0,
-      internationalBookCharges: 0,
+      name: "",
+      email: "",
+      mobile: "",
+      gender: "None",
+      experienceInYears: "",
+      organization: "",
+      address: "",
+      areaofInterest: [""],
+      videoType: "None",
     },
     // validationSchema: Yup.object({
     //   mobile: Yup.string()
@@ -95,14 +158,20 @@ function Overview() {
 
       const data = {
         role: "admin",
-        nationalBookCharges: values.nationalBookCharges,
-        internationalBookCharges: values.internationalBookCharges,
+        name: values.name,
+        email: values.email,
+        mobile: values.mobile,
+        address: values.address,
+        gender: values.gender,
+        experienceInYears: values.experienceInYears,
+        organization: values.organization,
+        areaofInterest: values.areaofInterest,
+        videoType: values.videoType,
       };
 
-      console.log("persInfo", data);
-
+      console.log();
       axios
-        .post("http://localhost:4000/api/admin/charges", data, {
+        .post("http://localhost:4000/api/admin/profileSettings", data, {
           headers: {
             Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
           },
@@ -120,10 +189,14 @@ function Overview() {
         });
     },
   });
+  console.log(JSON.parse(localStorage.getItem("token")));
+
   const { setValues } = formik;
+
   useEffect(() => {
+    // console.log("its token", JSON.parse(localStorage.getItem("token")));
     axios
-      .get("http://localhost:4000/api/admin/getcharges", {
+      .get("http://localhost:4000/api/admin/getprofileSettings", {
         params: {
           role: "admin",
         },
@@ -132,82 +205,146 @@ function Overview() {
         },
       })
       .then((response) => {
-        // Handle the response
-        console.log("sdfgh", response);
+        console.log("kkkkkk", response);
         setValues(response.data.message);
       })
       .catch((error) => {
-        // Handle the error
-        console.error(error);
+        console.log("error", error);
       });
   }, []);
 
   return (
     <DashboardLayout>
       <Header />
-      <SoftBox mt={2} mb={3}>
-      </SoftBox>
+      <SoftBox mt={2} mb={3}></SoftBox>
       <SoftBox mb={3}>
         <Card>
           <SoftBox pt={2} px={2}>
             <SoftBox mb={0.5}>
               <SoftTypography variant="h6" fontWeight="medium">
-                Charges Amount
+                Available Timming
               </SoftTypography>
             </SoftBox>
-            <SoftBox mt={2} mb={1}>
+            <SoftBox mb={1}>
               <form onSubmit={formik.handleSubmit}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
+                {/* <Grid container spacing={2}>
+                  <Grid item xs={12} md={2} mt={4} ml={4}>
                     <Grid mb={1} ml={0.5}>
-                      <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        National Book Charges:
+                      <SoftTypography component="label" variant="h6" fontWeight="medium">
+                        Days
                       </SoftTypography>
                     </Grid>
-                    <TextField
-                      fullWidth
-                      required
-                      type="number"
-                      name="nationalBookCharges"
-                      onChange={formik.handleChange}
-                      value={formik.values.nationalBookCharges}
-                      placeholder=" Enter National Book Charges"
-                    />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} md={2} mt={4}>
                     <Grid mb={1} ml={0.5}>
-                      <SoftTypography component="label" variant="caption" fontWeight="bold">
-                        International Book Charges:
+                      <SoftTypography component="label" variant="h6" fontWeight="medium">
+                        Status
                       </SoftTypography>
                     </Grid>
-                    <SoftInput
-                      required
-                      type="number"
-                      name="internationalBookCharges"
-                      onChange={formik.handleChange}
-                      value={formik.values.internationalBookCharges}
-                      placeholder=" Enter International Book Charges:"
-                    />
                   </Grid>
-                  <SoftBox mt={2} mb={2} textAlign="center">
-                    <h6
-                      style={{
-                        fontSize: ".8em",
-                        color: "red",
-                        textAlign: "center",
-                        fontWeight: 400,
-                        transition: ".2s all",
-                      }}
-                    >
-                      {/* {error} */}
-                    </h6>
-                  </SoftBox>
-                  <Grid item xs={12} mt={4} mb={1}>
-                    <SoftButton variant="gradient" color="info" type="submit" fullWidth>
-                      Save Information
-                    </SoftButton>
+
+                  <Grid item xs={12} md={2} mt={4}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="h6" fontWeight="medium">
+                        Start Time
+                      </SoftTypography>
+                    </Grid>
                   </Grid>
-                </Grid>
+                  <Grid item xs={12} md={2} mt={4}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="h6" fontWeight="medium">
+                        Close Time
+                      </SoftTypography>
+                    </Grid>
+                  </Grid>
+                  
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={2} mt={1}>
+                      <Grid mb={1} ml={0.5}>
+                        <SoftTypography ml={5} component="label" variant="h6" fontWeight="medium">
+                          Monday
+                        </SoftTypography>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={2} mt={1}>
+                      <Grid mb={1} ml={6}>
+                        <Switch defaultChecked />
+                      </Grid>
+                    </Grid>
+
+                    <Grid item xs={12} md={2} mt={1}>
+                      <Grid mb={1} ml={4}>
+                         <TextField
+                          fullWidth
+                          required
+                          type="time"
+                          name="name"
+                          onChange={formik.handleChange}
+                          value={formik.values.name}
+                          placeholder="Name"
+                        />
+                        
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={2} mt={1}>
+                      <Grid mb={1} ml={4}>
+                       <TextField
+                          fullWidth
+                          required
+                          type="time"
+                          name="name"
+                          onChange={formik.handleChange}
+                          value={formik.values.name}
+                          placeholder="Name"
+                        />
+                       
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} md={2} mt={1}>
+                      <Grid mb={1} ml={0.5}>
+                        <SoftButton variant="contained" onClick={(event)=>console.log("asgvcxs",event)} color="secondary" size="small">
+                          Add Break
+                        </SoftButton>
+                      </Grid>
+                    </Grid>
+
+                    <SoftBox mt={2} mb={2} textAlign="center">
+                      <h6
+                        style={{
+                          fontSize: ".8em",
+                          color: "red",
+                          textAlign: "center",
+                          fontWeight: 400,
+                          transition: ".2s all",
+                        }}
+                      >
+                       
+                      </h6>
+                    </SoftBox>
+                    <Grid item xs={12} mt={4} mb={1}>
+                      <SoftButton variant="gradient" color="info" type="submit" fullWidth>
+                        Save Information
+                      </SoftButton>
+                    </Grid>
+                  </Grid>
+                </Grid> */}
+                <Box sx={{ height: 480, width: "100%", mt:4 }}>
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    
+                    initialState={{
+                      pagination: {
+                        paginationModel: {
+                          pageSize: 7,
+                        },
+                      },
+                    }}
+                    pageSizeOptions={[5]}
+                    //checkboxSelection
+                    // disableRowSelectionOnClick
+                  />
+                </Box>
               </form>
             </SoftBox>
           </SoftBox>
@@ -274,7 +411,7 @@ function Overview() {
                 />
               </Grid> */}
               {/* <Grid item xs={12} md={6} xl={3}>
-                <PlaceholderCard title={{ variant: "h5", text: "New project" }} outlined />
+                <PlaceholderCard title={{ variant: "h6", text: "New project" }} outlined />
               </Grid> */}
             </Grid>
           </SoftBox>
