@@ -42,7 +42,7 @@ import Billing from "layouts/billing";
 import VirtualReality from "layouts/virtual-reality";
 import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
-import AdminProfile from "./layouts/Admin/profile"
+import Homepage from "layouts/homepage/index";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import SignOut from "layouts/authentication/sign-out";
@@ -146,16 +146,16 @@ const routes = [
     component: <SignOut />,
     noCollapse: true,
   },
-  // {
-  //   type: "collapse",
-  //   name: "AdminProfile",
-  //   key: "adminprofile",
-  //   route: "/admin/profile",
-  //   icon: <CustomerSupport size="12px" />,
-  //   component: <AdminProfile />,
-  //   noCollapse: true,
-  //   protected: true,
-  // },
+  {
+    type: "collapse",
+    name: "Homepage",
+    key: "homepage",
+    route: "/homepage",
+    icon: <CustomerSupport size="12px" />,
+    component: <Homepage />,
+    noCollapse: true,
+    // protected: true,
+  },
 ];
 
 export default routes;

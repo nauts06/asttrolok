@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -56,6 +56,7 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
+  const [Pathnamea, setPathnamea] = useState("");
 
   // Cache for the rtl
   useMemo(() => {
@@ -97,6 +98,8 @@ export default function App() {
   useEffect(() => {
     document.documentElement.scrollTop = 0;
     document.scrollingElement.scrollTop = 0;
+
+    setPathnamea(pathname);
   }, [pathname]);
 
   const getRoutes = (allRoutes) =>
@@ -119,6 +122,9 @@ export default function App() {
       return null;
     });
 
+  const params = useParams();
+
+  // console.log("locationjj",pathname);
   const configsButton = (
     <SoftBox
       display="flex"
@@ -147,6 +153,7 @@ export default function App() {
     <CacheProvider value={rtlCache}>
       <ThemeProvider theme={themeRTL}>
         <CssBaseline />
+
         {layout === "dashboard" && (
           <>
             <Sidenav
@@ -157,11 +164,10 @@ export default function App() {
               onMouseEnter={handleOnMouseEnter}
               onMouseLeave={handleOnMouseLeave}
             />
-            <Configurator />
-            {configsButton}
           </>
         )}
         {layout === "vr" && <Configurator />}
+
         <Routes>
           {getRoutes(localStorage.getItem("role") === "admin" ? adminRoutes : routes)}
           <Route path="*" element={<Navigate to="/dashboard" />} />
@@ -171,24 +177,30 @@ export default function App() {
   ) : (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      {layout === "dashboard"
-       && (
+      {console.log("Layout", layout)}
+      {layout === "dashboard" && (
         <>
-          {/* <Sidenav
-            color={sidenavColor}
-            brand={brand}
-            brandName={
-              localStorage.getItem("role") === "admin" ? "Astrologer Asttrolok" : "Asttrolok"
-            }
-            routes={localStorage.getItem("role") === "admin" ? adminRoutes : routes}
-            onMouseEnter={handleOnMouseEnter}
-            onMouseLeave={handleOnMouseLeave}
-          /> */}
+          {Pathnamea == "/homepage" ? (
+            (null)
+          ) : (
+            <Sidenav
+              color={sidenavColor}
+              brand={brand}
+              brandName={
+                localStorage.getItem("role") === "admin" ? "Astrologer Asttrolok" : "Asttrolok"
+              }
+              routes={localStorage.getItem("role") === "admin" ? adminRoutes : routes}
+              onMouseEnter={handleOnMouseEnter}
+              onMouseLeave={handleOnMouseLeave}
+            />
+          )}
+
           {/* <Configurator /> */}
           {/* {configsButton} */}
         </>
       )}
       {layout === "vr" && <Configurator />}
+      {console.log("Layout", layout)}
       <Routes>
         {getRoutes(localStorage.getItem("role") === "admin" ? adminRoutes : routes)}
 
