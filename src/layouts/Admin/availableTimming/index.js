@@ -56,6 +56,11 @@ import {
   Alert,
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   InputLabel,
   MenuItem,
@@ -63,6 +68,7 @@ import {
   Snackbar,
   Switch,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
 import SoftInput from "components/SoftInput";
@@ -72,28 +78,36 @@ import axios from "axios";
 
 import { DataGrid } from "@mui/x-data-grid";
 function Overview() {
-  const [monday, setMonday] = useState(false);
-  console.log("asdfghj", monday);
+  // const [monday, setMonday] = useState(false);
+  const [addBreak, setAddBreak] = useState(false);
+
+  // console.log("asdfghj", monday);
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const columns = [
     { field: "id", headerName: "Days", width: 150 },
     {
       field: "firstName",
       headerName: "Status",
-      width: 150,
-      editable: true, 
-      renderCell: (row) => (
-        <Switch/>
-      ),
+      width: 100,
+      editable: true,
+      renderCell: (row) => <Switch />,
     },
     {
       field: "lastName",
       headerName: "Start Time",
       width: 150,
       editable: true,
-      renderCell: (row) => (
-        <TextField type="time"/>
-      ),
+      renderCell: (row) => <TextField type="time" />,
     },
     {
       field: "age",
@@ -101,23 +115,60 @@ function Overview() {
       type: "number",
       width: 150,
       editable: true,
-      renderCell: (row) => (
-        <TextField type="time"/>
-      ),
+      renderCell: (row) => <TextField type="time" />,
+    },
+    { field: "", headerName: "", width: 20 },
+    {
+      field: "agae",
+      headerName: "Lunch Break",
+      type: "number",
+      width: 150,
+      editable: true,
+      renderCell: (row) => <Typography>4:30 - 5:00</Typography>,
     },
     {
-      // field: "fullName",
-      // headerName: "Full name",
-      // description: "This column has a value getter and is not sortable.",
-      // sortable: false,
-      // width: 160,
-      // valueGetter: (params: GridValueGetterParams) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+      field: "addBreak",
+      headerName: "",
+      width: 120,
+      editable: true,
+      renderCell: (row) => <SoftButton size="small" variant="gradient"  color="info" onClick={handleClickOpen}>Add Break</SoftButton>,
     },
+    {
+      field: "agase",
+      headerName: "Tea Break",
+      type: "number",
+      width: 150,
+      editable: true,
+      renderCell: (row) => <Typography>4:30 - 5:00</Typography>,
+    },
+    {
+      field: "addBreak",
+      headerName: "",
+      width: 120,
+      editable: true,
+      renderCell: (row) => <SoftButton size="small" variant="gradient"  color="info" onClick={handleClickOpen}>Add Break</SoftButton>,
+    },
+    // {
+    //   field: "BreakIn",
+    //   headerName: "Break In",
+    //   type: "number",
+    //   width: 150,
+    //   editable: true,
+    //   renderCell: (row) => <TextField type="time" />,
+    // },
+    // {
+    //   field: "BreakOut",
+    //   headerName: "Break Out",
+    //   type: "number",
+    //   width: 150,
+    //   editable: true,
+    //   renderCell: (row) => <TextField type="time" />,
+    // },
   ];
 
   const rows = [
     { id: "Monday", lastName: "Snow", firstName: "Jon", age: 35 },
+    //  addBreak === true ?  { id: "Mnday", lastName: "Ssnow", firstName: "Josn", age: 375 }:(""),
     { id: "Tuesday", lastName: "Lannister", firstName: "Cersei", age: 42 },
     { id: "Wednesday", lastName: "Lannister", firstName: "Jaime", age: 45 },
     { id: "Thursday", lastName: "Stark", firstName: "Arya", age: 16 },
@@ -169,7 +220,6 @@ function Overview() {
         videoType: values.videoType,
       };
 
-      console.log();
       axios
         .post("http://localhost:4000/api/admin/profileSettings", data, {
           headers: {
@@ -189,7 +239,7 @@ function Overview() {
         });
     },
   });
-  console.log(JSON.parse(localStorage.getItem("token")));
+  // console.log(JSON.parse(localStorage.getItem("token")));
 
   const { setValues } = formik;
 
@@ -213,6 +263,11 @@ function Overview() {
       });
   }, []);
 
+  // const handleAddBreak = (event) => {
+  //   console.log("vgcfxds", event.target.checked);
+  //   setAddBreak(event.target.checked);
+  // };
+
   return (
     <DashboardLayout>
       <Header />
@@ -227,6 +282,23 @@ function Overview() {
             </SoftBox>
             <SoftBox mb={1}>
               <form onSubmit={formik.handleSubmit}>
+                <Box sx={{ height: 500, width: "100%", mt: 4 }}>
+                  <DataGrid
+                    getRowId={(row) => row.id}
+                    rows={rows}
+                    columns={columns}
+                    initialState={{
+                      pagination: {
+                        paginationModel: {
+                          pageSize: 7,
+                        },
+                      },
+                    }}
+                    pageSizeOptions={[5]}
+                    //checkboxSelection
+                    // disableRowSelectionOnClick
+                  />
+                </Box>
                 {/* <Grid container spacing={2}>
                   <Grid item xs={12} md={2} mt={4} ml={4}>
                     <Grid mb={1} ml={0.5}>
@@ -328,25 +400,52 @@ function Overview() {
                     </Grid>
                   </Grid>
                 </Grid> */}
-                <Box sx={{ height: 480, width: "100%", mt:4 }}>
-                  <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    
-                    initialState={{
-                      pagination: {
-                        paginationModel: {
-                          pageSize: 7,
-                        },
-                      },
-                    }}
-                    pageSizeOptions={[5]}
-                    //checkboxSelection
-                    // disableRowSelectionOnClick
-                  />
-                </Box>
               </form>
             </SoftBox>
+            <Dialog open={open} onClose={handleClose} >
+              <DialogTitle>Add Break</DialogTitle>
+              <DialogContent>
+                
+              <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Start Time
+                      </SoftTypography>
+                    </Grid>
+                    <TextField
+                      fullWidth
+                      required
+                      type="time"
+                      name="name"
+                      // onChange={formik.handleChange}
+                      // value={formik.values.name}
+                      placeholder="Name"
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        End Time
+                      </SoftTypography>
+                    </Grid>
+                    <TextField
+                      fullWidth
+                      required
+                      type="time"
+                      // name="name"
+                      // onChange={formik.handleChange}
+                      // value={formik.values.name}
+                      placeholder="Name"
+                    />
+                  </Grid>
+                  </Grid>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={handleClose}>Submit</Button>
+              </DialogActions>
+            </Dialog>
           </SoftBox>
           <SoftBox p={2}>
             <Grid container spacing={3}>
