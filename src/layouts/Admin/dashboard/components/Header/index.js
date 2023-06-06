@@ -41,12 +41,10 @@ import breakpoints from "assets/theme/base/breakpoints";
 // Images
 import burceMars from "assets/images/bruce-mars.jpg";
 import curved0 from "assets/images/curved-images/curved0.jpg";
-import axios from "axios";
 
 function Header() {
   const [tabsOrientation, setTabsOrientation] = useState("horizontal");
   const [tabValue, setTabValue] = useState(0);
-  const [nameRes, setNameres] = useState('');
 
   useEffect(() => {
     // A function that sets the orientation state of the tabs.
@@ -56,7 +54,6 @@ function Header() {
         : setTabsOrientation("horizontal");
     }
 
-    
     /** 
      The event listener that's calling the handleTabsOrientation function when resizing the window.
     */
@@ -70,26 +67,6 @@ function Header() {
   }, [tabsOrientation]);
 
   const handleSetTabValue = (event, newValue) => setTabValue(newValue);
-
-  useEffect(() => {
-    // console.log("its token", JSON.parse(localStorage.getItem("token")));
-    axios
-      .get("http://localhost:4000/api/admin/getprofileSettings", {
-        params: {
-          role: "admin",
-        },
-        headers: {
-          Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
-        },
-      })
-      .then((response) => {
-        console.log("setNameres", response?.data?.message?.name);
-        setNameres(response?.data?.message?.name);
-      })
-      .catch((error) => {
-        console.log("error", error);
-      });
-  }, []);
 
   return (
     <SoftBox position="relative">
@@ -136,10 +113,10 @@ function Header() {
           <Grid item>
             <SoftBox height="100%" mt={0.5} lineHeight={1}>
               <SoftTypography variant="h5" fontWeight="medium">
-              {nameRes}
+               Revathi Shridhar
               </SoftTypography>
               <SoftTypography variant="button" color="text" fontWeight="medium">
-                {localStorage.getItem("role")==='admin' ? "Astrologer" : "Associate"}
+                Astrologer
               </SoftTypography>
             </SoftBox>
           </Grid>

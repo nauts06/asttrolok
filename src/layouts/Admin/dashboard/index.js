@@ -15,7 +15,12 @@ Coded by www.creative-tim.com
 
 // @mui material components
 import Grid from "@mui/material/Grid";
-import Icon from "@mui/material/Icon";
+import Card from "@mui/material/Card";
+
+// @mui icons
+import FacebookIcon from "@mui/icons-material/Facebook";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import InstagramIcon from "@mui/icons-material/Instagram";
 
 // Soft UI Dashboard React components
 import SoftBox from "components/SoftBox";
@@ -23,130 +28,428 @@ import SoftTypography from "components/SoftTypography";
 
 // Soft UI Dashboard React examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
-import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
-import MiniStatisticsCard from "examples/Cards/StatisticsCards/MiniStatisticsCard";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
-import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
+import ProfileInfoCard from "examples/Cards/InfoCards/ProfileInfoCard";
+import ProfilesList from "examples/Lists/ProfilesList";
+import DefaultProjectCard from "examples/Cards/ProjectCards/DefaultProjectCard";
+import PlaceholderCard from "examples/Cards/PlaceholderCard";
 
-// Soft UI Dashboard React base styles
-import typography from "assets/theme/base/typography";
-
-// Dashboard layout components
-import BuildByDevelopers from "layouts/dashboard/components/BuildByDevelopers";
-import WorkWithTheRockets from "layouts/dashboard/components/WorkWithTheRockets";
-import Projects from "layouts/dashboard/components/Projects";
-import OrderOverview from "layouts/dashboard/components/OrderOverview";
+// Overview page components
+// import Header from "layouts/profile/components/Header";
+import Header from "layouts/Admin/profile/components/Header";
+// import PlatformSettings from "layouts/profile/components/PlatformSettings";
+import PlatformSettings from "layouts/Admin/profile/components/PlatformSettings";
 
 // Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
-import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
+// import profilesListData from "layouts/profile/data/profilesListData";
+import profilesListData from "layouts/Admin/profile/data/profilesListData";
 
-function Dashboard() {
-  const { size } = typography;
-  const { chart, items } = reportsBarChartData;
+// Images
+import homeDecor1 from "assets/images/home-decor-1.jpg";
+import homeDecor2 from "assets/images/home-decor-2.jpg";
+import homeDecor3 from "assets/images/home-decor-3.jpg";
+import team1 from "assets/images/team-1.jpg";
+import team2 from "assets/images/team-2.jpg";
+import team3 from "assets/images/team-3.jpg";
+import team4 from "assets/images/team-4.jpg";
+import {
+  Alert,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Snackbar,
+  Switch,
+  TextField,
+} from "@mui/material";
+import { useFormik } from "formik";
+import SoftInput from "components/SoftInput";
+import SoftButton from "components/SoftButton";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+function Overview() {
+  // const [expertise, setExpertise] = useState([]);
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      mobile: "",
+      gender: "None",
+      experienceInYears: "",
+      organization: "",
+      address: "",
+      areaofInterest: [""],
+      videoType: "None",
+    },
+    // validationSchema: Yup.object({
+    //   mobile: Yup.string()
+    //     .min(10, "Mininum 10 Digits Required!")
+    //     .max(10, "Maximum 10 Digits Required!")
+    //     .required("Required!"),
+    //   //   mobile: Yup.string()
+    //   //     .email("Invalid email format")
+    //   //     .required("Required!"),
+    //   //   password: Yup.string()
+    //   //     .min(8, "Minimum 8 characters")
+    //   //     .required("Required!"),
+    //   //   confirm_password: Yup.string()
+    //   //     .oneOf([Yup.ref("password")], "Password's not match")
+    //   //     .required("Required!")
+    // }),
+    onSubmit: (values) => {
+      console.log("persInfo", values);
+
+      const data = {
+        role: "admin",
+        name: values.name,
+        email: values.email,
+        mobile: values.mobile,
+        address: values.address,
+        gender: values.gender,
+        experienceInYears: values.experienceInYears,
+        organization: values.organization,
+        areaofInterest: values.areaofInterest,
+        videoType: values.videoType,
+      };
+
+      console.log();
+      axios
+        .post("http://localhost:4000/api/admin/profileSettings", data, {
+          headers: {
+            Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+          },
+        })
+        .then((response) => {
+          console.log("datahhhh", response.status);
+          if (response.status !== 200) {
+            alert(`Unable to save this data!`);
+          } else {
+            alert(`Details Saved!`);
+          }
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+    },
+  });
+  console.log(JSON.parse(localStorage.getItem("token")));
+
+  const { setValues } = formik;
+
+  useEffect(() => {
+    // console.log("its token", JSON.parse(localStorage.getItem("token")));
+    axios
+      .get("http://localhost:4000/api/admin/getprofileSettings", {
+        params: {
+          role: "admin",
+        },
+        headers: {
+          Authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+        },
+      })
+      .then((response) => {
+        console.log("kkkkkk", response);
+        setValues(response.data.message);
+      })
+      .catch((error) => {
+        console.log("error", error);
+      });
+  }, []);
 
   return (
     <DashboardLayout>
-      <DashboardNavbar />
-      <SoftBox py={3}>
-        <SoftBox mb={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6} xl={3}>
-              <MiniStatisticsCard
-                title={{ text: "today's money" }}
-                count="$53,000"
-                percentage={{ color: "success", text: "+55%" }}
-                icon={{ color: "info", component: "paid" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} xl={3}>
-              <MiniStatisticsCard
-                title={{ text: "today's users" }}
-                count="2,300"
-                percentage={{ color: "success", text: "+3%" }}
-                icon={{ color: "info", component: "public" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} xl={3}>
-              <MiniStatisticsCard
-                title={{ text: "new clients" }}
-                count="+3,462"
-                percentage={{ color: "error", text: "-2%" }}
-                icon={{ color: "info", component: "emoji_events" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} xl={3}>
-              <MiniStatisticsCard
-                title={{ text: "sales" }}
-                count="$103,430"
-                percentage={{ color: "success", text: "+5%" }}
-                icon={{
-                  color: "info",
-                  component: "shopping_cart",
-                }}
-              />
-            </Grid>
+      <Header />
+      <SoftBox mt={2} mb={3}>
+        {/* <Grid container spacing={3}>
+          <Grid item xs={12} md={6} xl={4}>
+            <PlatformSettings />
           </Grid>
-        </SoftBox>
-        <SoftBox mb={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={7}>
-              <BuildByDevelopers />
-            </Grid>
-            <Grid item xs={12} lg={5}>
-              <WorkWithTheRockets />
-            </Grid>
-          </Grid>
-        </SoftBox>
-        <SoftBox mb={3}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={5}>
-              <ReportsBarChart
-                title="active users"
-                description={
-                  <>
-                    (<strong>+23%</strong>) than last week
-                  </>
-                }
-                chart={chart}
-                items={items}
-              />
-            </Grid>
-            <Grid item xs={12} lg={7}>
-              <GradientLineChart
-                title="Sales Overview"
-                description={
-                  <SoftBox display="flex" alignItems="center">
-                    <SoftBox fontSize={size.lg} color="success" mb={0.3} mr={0.5} lineHeight={0}>
-                      <Icon className="font-bold">arrow_upward</Icon>
-                    </SoftBox>
-                    <SoftTypography variant="button" color="text" fontWeight="medium">
-                      4% more{" "}
-                      <SoftTypography variant="button" color="text" fontWeight="regular">
-                        in 2021
-                      </SoftTypography>
-                    </SoftTypography>
-                  </SoftBox>
-                }
-                height="20.25rem"
-                chart={gradientLineChartData}
-              />
-            </Grid>
-          </Grid>
-        </SoftBox>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={8}>
-            <Projects />
-          </Grid>
-          <Grid item xs={12} md={6} lg={4}>
-            <OrderOverview />
-          </Grid>
-        </Grid>
+        </Grid> */}
       </SoftBox>
+      <SoftBox mb={3}>
+        <Card>
+          <SoftBox pt={2} px={2}>
+            <SoftBox mb={0.5}>
+              <SoftTypography variant="h6" fontWeight="medium">
+                Personal Information
+              </SoftTypography>
+            </SoftBox>
+            <SoftBox mb={1}>
+              <form onSubmit={formik.handleSubmit}>
+                {console.log("asdfghjkjhg", formik.values)}
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Name
+                      </SoftTypography>
+                    </Grid>
+                    <TextField
+                      fullWidth
+                      required
+                      type="text"
+                      name="name"
+                      onChange={formik.handleChange}
+                      value={formik.values.name}
+                      placeholder="Name"
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Email
+                      </SoftTypography>
+                    </Grid>
+                    <SoftInput
+                      required
+                      type="email"
+                      name="email"
+                      onChange={formik.handleChange}
+                      value={formik.values.email}
+                      placeholder="Email"
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Phone Number
+                      </SoftTypography>
+                    </Grid>
+                    <SoftInput
+                      required
+                      type="number"
+                      name="mobile"
+                      onChange={formik.handleChange}
+                      value={formik.values.mobile}
+                      placeholder="Phone Number"
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Gender
+                      </SoftTypography>
+                    </Grid>
+                    <TextField
+                      select
+                      fullWidth
+                      required
+                      type="text"
+                      name="gender"
+                      onChange={formik.handleChange}
+                      value={formik.values.gender}
+                      placeholder="Gender"
+                    >
+                      <MenuItem value="None">Select Gender</MenuItem>
+                      <MenuItem value="Male">Male</MenuItem>
+                      <MenuItem value="Female">Female</MenuItem>
+                    </TextField>
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Experience
+                      </SoftTypography>
+                    </Grid>
+                    <SoftInput
+                      required
+                      type="number"
+                      name="experienceInYears"
+                      onChange={formik.handleChange}
+                      value={formik.values.experienceInYears}
+                      placeholder="Experience"
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Organization
+                      </SoftTypography>
+                    </Grid>
+                    <SoftInput
+                      required
+                      type="text"
+                      name="organization"
+                      onChange={formik.handleChange}
+                      value={formik.values.organization}
+                      placeholder="Organization"
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Address
+                      </SoftTypography>
+                    </Grid>
+                    <SoftInput
+                      required
+                      type="text"
+                      name="address"
+                      onChange={formik.handleChange}
+                      value={formik.values.address}
+                      placeholder="Address"
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Area of Interest / Expertise
+                      </SoftTypography>
+                    </Grid>
+                    <FormControl fullWidth>
+                      {/* <InputLabel id="demo-multiple-name-label">Name</InputLabel> */}
+                      <Select
+                        fullWidth
+                        multiple
+                        name="areaofInterest"
+                        value={formik.values.areaofInterest}
+                        // value={formik.values.videoType}
+                        onChange={formik.handleChange}
+                        // input={<OutlinedInput label="Name" />}
+                        // MenuProps={MenuProps}Video Type
+                      >
+                        <MenuItem value="">Select Expertise</MenuItem>
+                        <MenuItem value="Astrology">Astrology</MenuItem>
+                        <MenuItem value="Palmistry">Palmistry</MenuItem>
+                        <MenuItem value="Numerology">Numerology</MenuItem>
+                        <MenuItem value="Ayurveda">Ayurveda</MenuItem>
+                        <MenuItem value="Vaastu">Vaastu</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <Grid mb={1} ml={0.5}>
+                      <SoftTypography component="label" variant="caption" fontWeight="bold">
+                        Video Type
+                      </SoftTypography>
+                    </Grid>
+                    <TextField
+                      required
+                      fullWidth
+                      select
+                      name="videoType"
+                      onChange={formik.handleChange}
+                      value={formik.values.videoType}
+                      placeholder="Video Type"
+                    >
+                      <MenuItem value="None">Select Video Type</MenuItem>
+                      <MenuItem value="Vimeo">Vimeo</MenuItem>
+                      <MenuItem value="YouTube">YouTube</MenuItem>
+                    </TextField>
+                  </Grid>
+                  {/* <SoftBox display="flex" alignItems="center">
+                  <Switch
+                    defaultChecked={true}
+                    // onChange={(event) => handleSetRememberMe(event.target.checked)}
+                  />
+                  <SoftTypography
+                    variant="button"
+                    fontWeight="regular"
+                    // onClick={handleSetRememberMe}
+                    sx={{ cursor: "pointer", userSelect: "none" }}
+                  >
+                    &nbsp;&nbsp;Are You Astrologer?
+                  </SoftTypography>
+                </SoftBox> */}
+                  <SoftBox mt={2} mb={2} textAlign="center">
+                    <h6
+                      style={{
+                        fontSize: ".8em",
+                        color: "red",
+                        textAlign: "center",
+                        fontWeight: 400,
+                        transition: ".2s all",
+                      }}
+                    >
+                      {/* {error} */}
+                    </h6>
+                  </SoftBox>
+                  <Grid item xs={12} mt={4} mb={1}>
+                    <SoftButton variant="gradient" color="info" type="submit" fullWidth>
+                      Save Information
+                    </SoftButton>
+                  </Grid>
+                </Grid>
+              </form>
+            </SoftBox>
+          </SoftBox>
+          <SoftBox p={2}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6} xl={3}>
+                {/* <DefaultProjectCard
+                  image={homeDecor1}
+                  label="project #2"
+                  title="modern"
+                  description="As Uber works through a huge amount of internal management turmoil."
+                  action={{
+                    type: "internal",
+                    route: "/pages/profile/profile-overview",
+                    color: "info",
+                    label: "view project",
+                  }}
+                  authors={[
+                    { image: team1, name: "Elena Morison" },
+                    { image: team2, name: "Ryan Milly" },
+                    { image: team3, name: "Nick Daniel" },
+                    { image: team4, name: "Peterson" },
+                  ]}
+                /> */}
+              </Grid>
+              <Grid item xs={12} md={6} xl={3}>
+                {/* <DefaultProjectCard
+                  image={homeDecor2}
+                  label="project #1"
+                  title="scandinavian"
+                  description="Music is something that every person has his or her own specific opinion about."
+                  action={{
+                    type: "internal",
+                    route: "/pages/profile/profile-overview",
+                    color: "info",
+                    label: "view project",
+                  }}
+                  authors={[
+                    { image: team3, name: "Nick Daniel" },
+                    { image: team4, name: "Peterson" },
+                    { image: team1, name: "Elena Morison" },
+                    { image: team2, name: "Ryan Milly" },
+                  ]}
+                /> */}
+              </Grid>
+              {/* <Grid item xs={12} md={6} xl={3}>
+                <DefaultProjectCard
+                  image={homeDecor3}
+                  label="project #3"
+                  title="minimalist"
+                  description="Different people have different taste, and various types of music."
+                  action={{
+                    type: "internal",
+                    route: "/pages/profile/profile-overview",
+                    color: "info",
+                    label: "view project",
+                  }}
+                  authors={[
+                    { image: team4, name: "Peterson" },
+                    { image: team3, name: "Nick Daniel" },
+                    { image: team2, name: "Ryan Milly" },
+                    { image: team1, name: "Elena Morison" },
+                  ]}
+                />
+              </Grid> */}
+              {/* <Grid item xs={12} md={6} xl={3}>
+                <PlaceholderCard title={{ variant: "h5", text: "New project" }} outlined />
+              </Grid> */}
+            </Grid>
+          </SoftBox>
+        </Card>
+      </SoftBox>
+
       <Footer />
     </DashboardLayout>
   );
 }
 
-export default Dashboard;
+export default Overview;

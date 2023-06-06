@@ -64,7 +64,7 @@ import Cube from "examples/Icons/Cube";
 
 const adminRoutes = [
   {
-    // type: "collapse",
+     type: "collapse",
     name: "Dashboard",
     key: "dashboard",
     route: "/admin/dashboard",

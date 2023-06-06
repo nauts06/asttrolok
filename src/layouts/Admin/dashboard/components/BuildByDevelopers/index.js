@@ -38,16 +38,16 @@ function BuildByDevelopers() {
                   Build by developers
                 </SoftTypography>
               </SoftBox>
-              <SoftTypography variant="h5" fontWeight="bold" gutterBottom>
+              {/* <SoftTypography variant="h5" fontWeight="bold" gutterBottom>
                 Soft UI Dashboard
-              </SoftTypography>
+              </SoftTypography> */}
               <SoftBox mb={6}>
-                <SoftTypography variant="body2" color="text">
+                {/* <SoftTypography variant="body2" color="text">
                   From colors, cards, typography to complex elements, you will find the full
                   documentation.
-                </SoftTypography>
-              </SoftBox>
-              <SoftTypography
+                </SoftTypography> */}
+              </SoftBox>                                 
+              {/* <SoftTypography
                 component="a"
                 href="#"
                 variant="button"
@@ -73,7 +73,7 @@ function BuildByDevelopers() {
               >
                 Read More
                 <Icon sx={{ fontWeight: "bold" }}>arrow_forward</Icon>
-              </SoftTypography>
+              </SoftTypography> */}
             </SoftBox>
           </Grid>
           <Grid item xs={12} lg={5} sx={{ position: "relative", ml: "auto" }}>
@@ -86,17 +86,7 @@ function BuildByDevelopers() {
               borderRadius="lg"
               variant="gradient"
             >
-              <SoftBox
-                component="img"
-                src={wavesWhite}
-                alt="waves"
-                display="block"
-                position="absolute"
-                left={0}
-                width="100%"
-                height="100%"
-              />
-              <SoftBox component="img" src={rocketWhite} alt="rocket" width="100%" pt={3} />
+             
             </SoftBox>
           </Grid>
         </Grid>

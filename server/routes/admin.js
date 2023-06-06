@@ -14,7 +14,8 @@ const { login,
         availableTimings,
         appointments,
         searchBookings,
-        dashboard
+        dashboard,
+        getavailableTimings
     } = require("../controllers/admin");
 
 adminRoutes.get("/", (req, res) => {
@@ -32,6 +33,7 @@ adminRoutes.post("/changePassword", checkLoginOrNot, changePassword)
 adminRoutes.post("/profileSettings", checkLoginOrNot, profileSettings)
 adminRoutes.get("/getprofileSettings", checkLoginOrNot, getprofileSettings)
 adminRoutes.post("/availableTimings", checkLoginOrNot, availableTimings)
+adminRoutes.get("/getavailableTimings", checkLoginOrNot, getavailableTimings)
 adminRoutes.get("/appointments", checkLoginOrNot, appointments)
 adminRoutes.get("/searchBookings", checkLoginOrNot, searchBookings)
 adminRoutes.get("/dashboard", checkLoginOrNot, dashboard)

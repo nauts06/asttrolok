@@ -70,6 +70,20 @@ import axios from "axios";
 
 function Overview() {
   // const [expertise, setExpertise] = useState([]);
+  const [state, setState] = useState({
+    open: false,
+    vertical: "top",
+    horizontal: "center",
+  });
+  const { vertical, horizontal, open } = state;
+
+  const handleClick = () => () => {
+    setState({ open: true });
+  };
+
+  const handleClose = () => {
+    setState({ ...state, open: false });
+  };
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -125,7 +139,10 @@ function Overview() {
           if (response.status !== 200) {
             alert(`Unable to save this data!`);
           } else {
-            alert(`Details Saved!`);
+            handleClick({
+              vertical: "bottom",
+              horizontal: "left",
+            });
           }
         })
         .catch((error) => {
@@ -374,6 +391,13 @@ function Overview() {
                     </SoftButton>
                   </Grid>
                 </Grid>
+                <Snackbar
+                  anchorOrigin={{ vertical, horizontal }}
+                  open={open}
+                  onClose={handleClose}
+                  message="I love snacks"
+                  key={vertical + horizontal}
+                />
               </form>
             </SoftBox>
           </SoftBox>

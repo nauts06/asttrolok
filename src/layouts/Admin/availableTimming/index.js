@@ -142,11 +142,11 @@ function Overview() {
       renderCell: (row) => <Typography>4:30 - 5:00</Typography>,
     },
     {
-      field: "addBreak",
+      field: "teaBreak",
       headerName: "",
       width: 120,
       editable: true,
-      renderCell: (row) => <SoftButton size="small" variant="gradient"  color="info" onClick={handleClickOpen}>Add Break</SoftButton>,
+      renderCell: (row) => <SoftButton size="small" variant="gradient"  color="info" onClick={handleClickOpen}>Tea Break</SoftButton>,
     },
     // {
     //   field: "BreakIn",
